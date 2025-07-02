@@ -9,7 +9,7 @@ use support\Db;
 
 
 /**
- * 
+ *
  *
  * @property int $id 主键
  * @property int $admin_id 代理
@@ -48,6 +48,11 @@ class AdminMoneyLog extends Base
         'after',
         'memo',
     ];
+
+    function admin()
+    {
+        return $this->belongsTo(Admin::class, 'admin_id', 'id');
+    }
 
 
 }

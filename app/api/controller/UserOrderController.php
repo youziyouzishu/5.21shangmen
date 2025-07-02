@@ -396,9 +396,6 @@ class UserOrderController extends Base
             $item->project->sales += $item->num;
             $item->project->save();
         });
-        #结算
-        Admin::changeMoney($order->agent_get_amount, $order->admin_id, '订单号' . $order->ordersn . '结算');
-        User::changeMoney($order->coser_get_amount, $order->coser_id, '订单号' . $order->ordersn . '结算');
 
         return $this->success('成功');
     }

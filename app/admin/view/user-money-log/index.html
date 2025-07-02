@@ -15,27 +15,6 @@
                 <form class="layui-form top-search-from">
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">主键</label>
-                        <div class="layui-input-block">
-                            <input type="number" name="id" value="" class="layui-input">
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">提现方式</label>
-                        <div class="layui-input-block">
-                            <div name="pay_type" id="pay_type" value="" ></div>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">状态</label>
-                        <div class="layui-input-block">
-                            <div name="status" id="status" value="" ></div>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
                         <label class="layui-form-label">创建时间</label>
                         <div class="layui-input-block">
                             <div class="layui-input-block" id="created_at">
@@ -72,18 +51,18 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.userwithdraw.insert">
+            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.usermoneylog.insert">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.userwithdraw.delete">
+            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.usermoneylog.delete">
                 <i class="layui-icon layui-icon-delete"></i>删除
             </button>
         </script>
 
         <!-- 表格行工具栏 -->
         <script type="text/html" id="table-bar">
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.userwithdraw.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.userwithdraw.delete">删除</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.usermoneylog.update">编辑</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.usermoneylog.delete">删除</button>
         </script>
 
         <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
@@ -95,43 +74,11 @@
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/user-withdraw/select";
-            const UPDATE_API = "/admin/user-withdraw/update";
-            const DELETE_API = "/admin/user-withdraw/delete";
-            const INSERT_URL = "/admin/user-withdraw/insert";
-            const UPDATE_URL = "/admin/user-withdraw/update";
-            
-            // 字段 提现方式:1=微信,2=支付宝 pay_type
-            layui.use(["jquery", "xmSelect"], function() {
-                let value = layui.$("#pay_type").attr("value");
-                let initValue = value ? value.split(",") : [];
-                layui.xmSelect.render({
-                    el: "#pay_type",
-                    name: "pay_type",
-                    filterable: true,
-                    initValue: initValue,
-                    data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
-                    model: {"icon":"hidden","label":{"type":"text"}},
-                    clickClose: true,
-                    radio: true,
-                })
-            });
-            
-            // 字段 状态:1=待收款,2=提现成功 status
-            layui.use(["jquery", "xmSelect"], function() {
-                let value = layui.$("#status").attr("value");
-                let initValue = value ? value.split(",") : [];
-                layui.xmSelect.render({
-                    el: "#status",
-                    name: "status",
-                    filterable: true,
-                    initValue: initValue,
-                    data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
-                    model: {"icon":"hidden","label":{"type":"text"}},
-                    clickClose: true,
-                    radio: true,
-                })
-            });
+            const SELECT_API = "/admin/user-money-log/select";
+            const UPDATE_API = "/admin/user-money-log/update";
+            const DELETE_API = "/admin/user-money-log/delete";
+            const INSERT_URL = "/admin/user-money-log/insert";
+            const UPDATE_URL = "/admin/user-money-log/update";
             
             // 字段 创建时间 created_at
             layui.use(["laydate"], function() {
@@ -158,37 +105,21 @@
 					},{
 						title: "主键",align: "center",
 						field: "id",
-						sort: true,
 					},{
 						title: "用户",align: "center",
 						field: "user_id",
 					},{
-						title: "提现金额",align: "center",
-						field: "amount",
+						title: "变更余额",align: "center",
+						field: "money",
 					},{
-						title: "提现方式",align: "center",
-						field: "pay_type",
-						templet: function (d) {
-							let field = "pay_type";
-							if (typeof d[field] == "undefined") return "";
-							let items = [];
-							layui.each((d[field] + "").split(","), function (k , v) {
-								items.push(apiResults[field][v] || v);
-							});
-							return util.escape(items.join(","));
-						}
+						title: "变更前余额",align: "center",
+						field: "before",
 					},{
-						title: "状态",align: "center",
-						field: "status",
-						templet: function (d) {
-							let field = "status";
-							if (typeof d[field] == "undefined") return "";
-							let items = [];
-							layui.each((d[field] + "").split(","), function (k , v) {
-								items.push(apiResults[field][v] || v);
-							});
-							return util.escape(items.join(","));
-						}
+						title: "变更后余额",align: "center",
+						field: "after",
+					},{
+						title: "备注",align: "center",
+						field: "memo",
 					},{
 						title: "创建时间",align: "center",
 						field: "created_at",
@@ -225,10 +156,7 @@
 				    }
 				});
 				
-				// 获取表格中下拉或树形组件数据
-				let apiResults = {};
-				apiResults["pay_type"] = {"1":"微信","2":"支付宝"};
-				apiResults["status"] = {"1":"待收款","2":"提现成功"};
+				
                 // 编辑或删除行事件
                 table.on("tool(data-table)", function(obj) {
                     if (obj.event === "remove") {

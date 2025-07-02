@@ -144,6 +144,11 @@ class UserController extends Base
         return $this->success('成功');
     }
 
+    /**
+     * 收藏列表
+     * @param Request $request
+     * @return Response
+     */
     function collect(Request $request)
     {
         $lat = $request->post('lat');

@@ -22,7 +22,7 @@
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">提现方式</label>
+                        <label class="layui-form-label">支付方式</label>
                         <div class="layui-input-block">
                             <div name="pay_type" id="pay_type" value="" ></div>
                         </div>
@@ -36,7 +36,7 @@
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">创建时间</label>
+                        <label class="layui-form-label">下单时间</label>
                         <div class="layui-input-block">
                             <div class="layui-input-block" id="created_at">
                                 <input type="text" autocomplete="off" name="created_at[]" id="created_at-date-start" class="layui-input inline-block" placeholder="开始时间">
@@ -72,18 +72,18 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.userwithdraw.insert">
+            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.order.insert">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.userwithdraw.delete">
+            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.order.delete">
                 <i class="layui-icon layui-icon-delete"></i>删除
             </button>
         </script>
 
         <!-- 表格行工具栏 -->
         <script type="text/html" id="table-bar">
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.userwithdraw.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.userwithdraw.delete">删除</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.order.update">编辑</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.order.delete">删除</button>
         </script>
 
         <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
@@ -95,13 +95,13 @@
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/user-withdraw/select";
-            const UPDATE_API = "/admin/user-withdraw/update";
-            const DELETE_API = "/admin/user-withdraw/delete";
-            const INSERT_URL = "/admin/user-withdraw/insert";
-            const UPDATE_URL = "/admin/user-withdraw/update";
+            const SELECT_API = "/admin/order/select";
+            const UPDATE_API = "/admin/order/update";
+            const DELETE_API = "/admin/order/delete";
+            const INSERT_URL = "/admin/order/insert";
+            const UPDATE_URL = "/admin/order/update";
             
-            // 字段 提现方式:1=微信,2=支付宝 pay_type
+            // 字段 支付方式:0=无,1=微信,2=支付宝 pay_type
             layui.use(["jquery", "xmSelect"], function() {
                 let value = layui.$("#pay_type").attr("value");
                 let initValue = value ? value.split(",") : [];
@@ -110,14 +110,14 @@
                     name: "pay_type",
                     filterable: true,
                     initValue: initValue,
-                    data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
+                    data: [{"value":"0","name":"无"},{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
                     model: {"icon":"hidden","label":{"type":"text"}},
                     clickClose: true,
                     radio: true,
                 })
             });
             
-            // 字段 状态:1=待收款,2=提现成功 status
+            // 字段 状态:0=待支付,1=待接单,2=取消,3=接单超时,4=待出发,5=服务中,6=待评价,7=已完成,8=在路上,9=待服务 status
             layui.use(["jquery", "xmSelect"], function() {
                 let value = layui.$("#status").attr("value");
                 let initValue = value ? value.split(",") : [];
@@ -126,14 +126,14 @@
                     name: "status",
                     filterable: true,
                     initValue: initValue,
-                    data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
+                    data: [{"value":"0","name":"待支付"},{"value":"1","name":"待接单"},{"value":"2","name":"取消"},{"value":"3","name":"接单超时"},{"value":"4","name":"待出发"},{"value":"5","name":"服务中"},{"value":"6","name":"待评价"},{"value":"7","name":"已完成"},{"value":"8","name":"在路上"},{"value":"9","name":"待服务"}],
                     model: {"icon":"hidden","label":{"type":"text"}},
                     clickClose: true,
                     radio: true,
                 })
             });
             
-            // 字段 创建时间 created_at
+            // 字段 下单时间 created_at
             layui.use(["laydate"], function() {
                 layui.laydate.render({
                     elem: "#created_at",
@@ -160,13 +160,52 @@
 						field: "id",
 						sort: true,
 					},{
+						title: "所属代理",align: "center",
+						field: "admin_id",
+					},{
 						title: "用户",align: "center",
 						field: "user_id",
 					},{
-						title: "提现金额",align: "center",
-						field: "amount",
+						title: "Coser",align: "center",
+						field: "coser_id",
 					},{
-						title: "提现方式",align: "center",
+						title: "服饰",align: "center",
+						field: "costume_id",
+					},{
+						title: "地址",align: "center",
+						field: "address_id",
+					},{
+						title: "预约时间",align: "center",
+						field: "time_id",
+					},{
+						title: "优惠券",align: "center",
+						field: "coupon_id",
+					},{
+						title: "订单编号",align: "center",
+						field: "ordersn",
+					},{
+						title: "商品价格",align: "center",
+						field: "project_amount",
+					},{
+						title: "支付价格",align: "center",
+						field: "pay_amount",
+					},{
+						title: "车费",align: "center",
+						field: "fare_amount",
+					},{
+						title: "订单总金额",align: "center",
+						field: "total_amount",
+					},{
+						title: "优惠券金额",align: "center",
+						field: "coupon_amount",
+					},{
+						title: "服装信息",align: "center",
+						field: "costume_ext",
+					},{
+						title: "总时长",align: "center",
+						field: "total_minute",
+					},{
+						title: "支付方式",align: "center",
 						field: "pay_type",
 						templet: function (d) {
 							let field = "pay_type";
@@ -190,12 +229,75 @@
 							return util.escape(items.join(","));
 						}
 					},{
-						title: "创建时间",align: "center",
+						title: "备注",align: "center",
+						field: "mark",
+					},{
+						title: "付款时间",align: "center",
+						field: "pay_time",
+					},{
+						title: "取消时间",align: "center",
+						field: "cancel_time",
+					},{
+						title: "完成时间",align: "center",
+						field: "finish_time",
+					},{
+						title: "下单时间",align: "center",
 						field: "created_at",
 						sort: true,
 					},{
 						title: "更新时间",align: "center",
 						field: "updated_at",
+					},{
+						title: "Coser结算金额",align: "center",
+						field: "coser_get_amount",
+					},{
+						title: "代理结算金额",align: "center",
+						field: "agent_get_amount",
+					},{
+						title: "平台结算金额",align: "center",
+						field: "admin_get_amount",
+					},{
+						title: "用户纬度",align: "center",
+						field: "user_lat",
+					},{
+						title: "用户经度",align: "center",
+						field: "user_lng",
+					},{
+						title: "Coser纬度",align: "center",
+						field: "coser_lat",
+					},{
+						title: "Coser经度",align: "center",
+						field: "coser_lng",
+					},{
+						title: "距离",align: "center",
+						field: "distance",
+					},{
+						title: "接单时间",align: "center",
+						field: "take_time",
+					},{
+						title: "出发时间",align: "center",
+						field: "depart_time",
+					},{
+						title: "到达时间",align: "center",
+						field: "arrive_time",
+					},{
+						title: "开始服务时间",align: "center",
+						field: "start_service_time",
+					},{
+						title: "结束服务时间",align: "center",
+						field: "end_service_time",
+					},{
+						title: "到达拍照",align: "center",
+						field: "arrive_image",
+						templet: function (d) {
+							return '<img src="'+encodeURI(d['arrive_image'])+'" style="max-width:32px;max-height:32px;" alt="" />'
+						}
+					},{
+						title: "到达备注",align: "center",
+						field: "arrive_mark",
+					},{
+						title: "应该结束时间",align: "center",
+						field: "should_end_service_time",
 					},{
 						title: "操作",
 						toolbar: "#table-bar",
@@ -227,8 +329,8 @@
 				
 				// 获取表格中下拉或树形组件数据
 				let apiResults = {};
-				apiResults["pay_type"] = {"1":"微信","2":"支付宝"};
-				apiResults["status"] = {"1":"待收款","2":"提现成功"};
+				apiResults["pay_type"] = ["无","微信","支付宝"];
+				apiResults["status"] = ["待支付","待接单","取消","接单超时","待出发","服务中","待评价","已完成","在路上","待服务"];
                 // 编辑或删除行事件
                 table.on("tool(data-table)", function(obj) {
                     if (obj.event === "remove") {

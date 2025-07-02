@@ -15,33 +15,32 @@
                 <div class="main-container mr-5">
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label required">用户</label>
+                        <label class="layui-form-label required">订单</label>
                         <div class="layui-input-block">
-                            <input type="number" name="user_id" value="" required lay-verify="required" class="layui-input">
+                            <input type="number" name="order_id" value="" required lay-verify="required" class="layui-input">
                         </div>
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label required">提现金额</label>
+                        <label class="layui-form-label required">项目</label>
                         <div class="layui-input-block">
-                            <input type="text" name="amount" value="" required lay-verify="required" class="layui-input">
+                            <input type="number" name="project_id" value="" required lay-verify="required" class="layui-input">
                         </div>
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label required">提现方式</label>
+                        <label class="layui-form-label required">数量</label>
                         <div class="layui-input-block">
-                            <div name="pay_type" id="pay_type" required value="" ></div>
+                            <input type="number" name="num" value="" required lay-verify="required" class="layui-input">
                         </div>
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label required">状态</label>
+                        <label class="layui-form-label required">项目信息</label>
                         <div class="layui-input-block">
-                            <div name="status" id="status" required value="" ></div>
+                            <input type="text" name="project_ext"id="project_ext" value="{}" required lay-verify="required" class="layui-input">
                         </div>
                     </div>
-                    
                 </div>
             </div>
 
@@ -67,42 +66,13 @@
         <script>
             
             // 相关接口
-            const INSERT_API = "/admin/user-withdraw/insert";
-            
-            // 字段 提现方式:1=微信,2=支付宝 pay_type
-            layui.use(["jquery", "xmSelect"], function() {
-                let value = layui.$("#pay_type").attr("value");
-                let initValue = value ? value.split(",") : [];
-                layui.xmSelect.render({
-                    el: "#pay_type",
-                    name: "pay_type",
-                    filterable: true,
-                    initValue: initValue,
-                    data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
-                    model: {"icon":"hidden","label":{"type":"text"}},
-                    clickClose: true,
-                    radio: true,
-                    layVerify: "required",
-                })
+            const INSERT_API = "/admin/order-item/insert";
+            jsonArea({
+                el: "#project_ext",
+                change: function(data) {
+                    console.log(data);
+                }
             });
-            
-            // 字段 状态:1=待收款,2=提现成功 status
-            layui.use(["jquery", "xmSelect"], function() {
-                let value = layui.$("#status").attr("value");
-                let initValue = value ? value.split(",") : [];
-                layui.xmSelect.render({
-                    el: "#status",
-                    name: "status",
-                    filterable: true,
-                    initValue: initValue,
-                    data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
-                    model: {"icon":"hidden","label":{"type":"text"}},
-                    clickClose: true,
-                    radio: true,
-                    layVerify: "required",
-                })
-            });
-            
             //提交事件
             layui.use(["form", "popup"], function () {
                 // 字段验证允许为空

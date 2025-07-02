@@ -28,7 +28,7 @@ class CoserController extends Base
      * @param Request $request
      * @return \support\Response
      */
-    function select(Request $request)
+    function list(Request $request)
     {
         $city_id = $request->post('city_id');
         $status = $request->post('status');#0全部 1可预约 2服务中
@@ -200,7 +200,7 @@ class CoserController extends Base
         if ($firstTime->status == 'booked'){
             $status_text = '服务中';
         }
-        $query = Order::where('coser_id',$request->user_id)->whereDate('finish_time',Carbon::today())->whereIn('status',[6,7]);
+        $query = Order::where('coser_id',$request->user_id)->whereDate('end_service_time',Carbon::today());
         $today_amount = $query->sum('pay_amount');
         $project_amount = $query->sum('project_amount');
         $fare_amount = $query->sum('fare_amount');
@@ -253,9 +253,8 @@ class CoserController extends Base
         $month = $date->month;
         $orders = Order::where('coser_id',$request->user_id)
             ->with(['items'])
-            ->whereYear('finish_time',$year)
-            ->whereMonth('finish_time',$month)
-            ->where('status',7)
+            ->whereYear('end_service_time',$year)
+            ->whereMonth('end_service_time',$month)
             ->orderByDesc('id')
             ->paginate()
             ->items();

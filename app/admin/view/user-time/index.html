@@ -15,21 +15,7 @@
                 <form class="layui-form top-search-from">
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">主键</label>
-                        <div class="layui-input-block">
-                            <input type="number" name="id" value="" class="layui-input">
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">提现方式</label>
-                        <div class="layui-input-block">
-                            <div name="pay_type" id="pay_type" value="" ></div>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">状态</label>
+                        <label class="layui-form-label">预约状态:available=可约,unavailable=不可约,booked=已被预约</label>
                         <div class="layui-input-block">
                             <div name="status" id="status" value="" ></div>
                         </div>
@@ -72,18 +58,18 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.userwithdraw.insert">
+            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.usertime.insert">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.userwithdraw.delete">
+            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.usertime.delete">
                 <i class="layui-icon layui-icon-delete"></i>删除
             </button>
         </script>
 
         <!-- 表格行工具栏 -->
         <script type="text/html" id="table-bar">
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.userwithdraw.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.userwithdraw.delete">删除</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.usertime.update">编辑</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.usertime.delete">删除</button>
         </script>
 
         <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
@@ -95,29 +81,13 @@
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/user-withdraw/select";
-            const UPDATE_API = "/admin/user-withdraw/update";
-            const DELETE_API = "/admin/user-withdraw/delete";
-            const INSERT_URL = "/admin/user-withdraw/insert";
-            const UPDATE_URL = "/admin/user-withdraw/update";
+            const SELECT_API = "/admin/user-time/select";
+            const UPDATE_API = "/admin/user-time/update";
+            const DELETE_API = "/admin/user-time/delete";
+            const INSERT_URL = "/admin/user-time/insert";
+            const UPDATE_URL = "/admin/user-time/update";
             
-            // 字段 提现方式:1=微信,2=支付宝 pay_type
-            layui.use(["jquery", "xmSelect"], function() {
-                let value = layui.$("#pay_type").attr("value");
-                let initValue = value ? value.split(",") : [];
-                layui.xmSelect.render({
-                    el: "#pay_type",
-                    name: "pay_type",
-                    filterable: true,
-                    initValue: initValue,
-                    data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
-                    model: {"icon":"hidden","label":{"type":"text"}},
-                    clickClose: true,
-                    radio: true,
-                })
-            });
-            
-            // 字段 状态:1=待收款,2=提现成功 status
+            // 字段 预约状态:available=可约,unavailable=不可约,booked=已被预约 status
             layui.use(["jquery", "xmSelect"], function() {
                 let value = layui.$("#status").attr("value");
                 let initValue = value ? value.split(",") : [];
@@ -126,7 +96,7 @@
                     name: "status",
                     filterable: true,
                     initValue: initValue,
-                    data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
+                    data: [{"value":"available","name":"可约"},{"value":"unavailable","name":"不可约"},{"value":"booked","name":"已被预约"}],
                     model: {"icon":"hidden","label":{"type":"text"}},
                     clickClose: true,
                     radio: true,
@@ -158,27 +128,14 @@
 					},{
 						title: "主键",align: "center",
 						field: "id",
-						sort: true,
 					},{
 						title: "用户",align: "center",
 						field: "user_id",
 					},{
-						title: "提现金额",align: "center",
-						field: "amount",
+						title: "时间",align: "center",
+						field: "time",
 					},{
-						title: "提现方式",align: "center",
-						field: "pay_type",
-						templet: function (d) {
-							let field = "pay_type";
-							if (typeof d[field] == "undefined") return "";
-							let items = [];
-							layui.each((d[field] + "").split(","), function (k , v) {
-								items.push(apiResults[field][v] || v);
-							});
-							return util.escape(items.join(","));
-						}
-					},{
-						title: "状态",align: "center",
+						title: "预约状态:available=可约,unavailable=不可约,booked=已被预约",align: "center",
 						field: "status",
 						templet: function (d) {
 							let field = "status";
@@ -189,6 +146,9 @@
 							});
 							return util.escape(items.join(","));
 						}
+					},{
+						title: "订单ID",align: "center",
+						field: "order_id",
 					},{
 						title: "创建时间",align: "center",
 						field: "created_at",
@@ -227,8 +187,7 @@
 				
 				// 获取表格中下拉或树形组件数据
 				let apiResults = {};
-				apiResults["pay_type"] = {"1":"微信","2":"支付宝"};
-				apiResults["status"] = {"1":"待收款","2":"提现成功"};
+				apiResults["status"] = {"available":"可约","unavailable":"不可约","booked":"已被预约"};
                 // 编辑或删除行事件
                 table.on("tool(data-table)", function(obj) {
                     if (obj.event === "remove") {

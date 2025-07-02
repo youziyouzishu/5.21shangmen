@@ -2,11 +2,15 @@
 
 namespace app\api\controller;
 
+use app\admin\model\Admin;
+use app\admin\model\Area;
 use app\admin\model\Order;
+use app\admin\model\User;
 use app\api\basic\Base;
 use Carbon\Carbon;
 use support\Request;
 use support\Response;
+use Webman\RedisQueue\Client;
 
 class CoserOrderController extends Base
 {
@@ -60,6 +64,8 @@ class CoserOrderController extends Base
         $order->status = 4;#变为待出发
         $order->take_time = Carbon::now();
         $order->save();
+
+        Client::send('job', ['id' => $order->id, 'event' => 'order_expire'], 60*60*24 + $order->total_minute * 60);
         return $this->success('成功');
     }
 
@@ -91,11 +97,16 @@ class CoserOrderController extends Base
      */
     function arrive(Request $request)
     {
+        $lng = $request->post('lng');
+        $lat = $request->post('lat');
         $id = $request->post('id');
         $arrive_image = $request->post('arrive_image');
         $arrive_mark = $request->post('arrive_mark');
         if (empty($arrive_image)) {
             return $this->fail('必须上传照片');
+        }
+        if (empty($lng) || empty($lat)) {
+            return $this->fail('获取位置失败');
         }
         $order = Order::find($id);
         if (!$order) {
@@ -103,6 +114,10 @@ class CoserOrderController extends Base
         }
         if ($order->status != 8) {
             return $this->fail('订单状态错误');
+        }
+        $distance = Area::getDistanceFromLngLat($lng,$lat,$order->address->lng,$order->address->lat);
+        if ($distance > 0.5) {
+            return $this->fail('超出打卡范围');
         }
         $order->status = 9;#变为待服务
         $order->arrive_time = Carbon::now();
@@ -118,6 +133,8 @@ class CoserOrderController extends Base
      */
     function startService(Request $request)
     {
+        $lng = $request->post('lng');
+        $lat = $request->post('lat');
         $id = $request->post('id');
         $order = Order::find($id);
         if (!$order) {
@@ -125,6 +142,13 @@ class CoserOrderController extends Base
         }
         if ($order->status != 9) {
             return $this->fail('订单状态错误');
+        }
+        if (empty($lng) || empty($lat)) {
+            return $this->fail('获取位置失败');
+        }
+        $distance = Area::getDistanceFromLngLat($lng,$lat,$order->address->lng,$order->address->lat);
+        if ($distance > 0.5) {
+            return $this->fail('超出打卡范围');
         }
         $start_service_time = Carbon::now();
         $order->status = 5;#变为服务中
@@ -140,6 +164,8 @@ class CoserOrderController extends Base
      */
     function endService(Request $request)
     {
+        $lng = $request->post('lng');
+        $lat = $request->post('lat');
         $id = $request->post('id');
         $order = Order::find($id);
         if (!$order) {
@@ -148,9 +174,20 @@ class CoserOrderController extends Base
         if ($order->status != 5) {
             return $this->fail('订单状态错误');
         }
+        if (empty($lng) || empty($lat)) {
+            return $this->fail('获取位置失败');
+        }
+        $distance = Area::getDistanceFromLngLat($lng,$lat,$order->address->lng,$order->address->lat);
+        if ($distance > 0.5) {
+            return $this->fail('超出打卡范围');
+        }
         $order->status = 6;#变为待评价
         $order->end_service_time = Carbon::now();
         $order->save();
+
+        #结算
+        Admin::changeMoney($order->agent_get_amount, $order->admin_id, '订单号' . $order->ordersn . '结算');
+        User::changeMoney($order->coser_get_amount, $order->coser_id, '订单号' . $order->ordersn . '结算');
         return $this->success('成功');
     }
 

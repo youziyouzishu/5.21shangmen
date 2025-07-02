@@ -62,7 +62,7 @@ class CommonController extends Base
     }
 
     /**
-     * 通知列表
+     * 公告栏
      * @param Request $request
      * @return \support\Response
      */
@@ -72,14 +72,7 @@ class CommonController extends Base
         return $this->success('请求成功', $rows);
     }
 
-    #获取配置
-    function getConfig()
-    {
-        $name = 'admin_config';
-        $config = Option::where('name', $name)->value('value');
-        $config = json_decode($config);
-        return $this->success('成功', $config);
-    }
+
 
 
 }

@@ -16,30 +16,16 @@
                 <div class="main-container mr-5">
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label required">用户</label>
+                        <label class="layui-form-label required">图片</label>
                         <div class="layui-input-block">
-                            <input type="number" name="user_id" value="" required lay-verify="required" class="layui-input">
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label required">提现金额</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="amount" value="" required lay-verify="required" class="layui-input">
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label required">提现方式</label>
-                        <div class="layui-input-block">
-                            <div name="pay_type" id="pay_type" required value="" ></div>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label required">状态</label>
-                        <div class="layui-input-block">
-                            <div name="status" id="status" required value="" ></div>
+                            <img class="img-3" src=""/>
+                            <input type="text" style="display:none" name="image" value="" />
+                            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="image"  permission="app.admin.upload.image">
+                                <i class="layui-icon layui-icon-upload"></i>上传图片
+                            </button>
+                            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="attachment-choose-image"  permission="app.admin.upload.attachment">
+                                <i class="layui-icon layui-icon-align-left"></i>选择图片
+                            </button>
                         </div>
                     </div>
                     
@@ -68,8 +54,8 @@
 
             // 相关接口
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/user-withdraw/select" + location.search;
-            const UPDATE_API = "/admin/user-withdraw/update";
+            const SELECT_API = "/admin/costume/select" + location.search;
+            const UPDATE_API = "/admin/costume/update";
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
                 let $ = layui.$;
@@ -107,38 +93,34 @@
                             }
                         });
                         
-                        // 字段 提现方式:1=微信,2=支付宝 pay_type
-                        layui.use(["jquery", "xmSelect"], function() {
-                            let value = layui.$("#pay_type").attr("value");
-                            let initValue = value ? value.split(",") : [];
-                            layui.xmSelect.render({
-                                el: "#pay_type",
-                                name: "pay_type",
-                                filterable: true,
-                                initValue: initValue,
-                                data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
-                                model: {"icon":"hidden","label":{"type":"text"}},
-                                clickClose: true,
-                                radio: true,
-                                layVerify: "required",
-                            })
-                        });
-                        
-                        // 字段 状态:1=待收款,2=提现成功 status
-                        layui.use(["jquery", "xmSelect"], function() {
-                            let value = layui.$("#status").attr("value");
-                            let initValue = value ? value.split(",") : [];
-                            layui.xmSelect.render({
-                                el: "#status",
-                                name: "status",
-                                filterable: true,
-                                initValue: initValue,
-                                data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
-                                model: {"icon":"hidden","label":{"type":"text"}},
-                                clickClose: true,
-                                radio: true,
-                                layVerify: "required",
-                            })
+                        // 字段 图片 image
+                        layui.use(["upload", "layer"], function() {
+                            let input = layui.$("#image").prev();
+                            input.prev().attr("src", input.val());
+                            layui.$("#attachment-choose-image").on("click", function() {
+                                parent.layer.open({
+                                    type: 2,
+                                    title: "选择附件",
+                                    content: "/app/admin/upload/attachment?ext=jpg,jpeg,png,gif,bmp",
+                                    area: ["95%", "90%"],
+                                    success: function (layero, index) {
+                                        parent.layui.$("#layui-layer" + index).data("callback", function (data) {
+                                            input.val(data.url).prev().attr("src", data.url);
+                                        });
+                                    }
+                                });
+                            });
+                            layui.upload.render({
+                                elem: "#image",
+                                acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
+                                url: "/app/admin/upload/image",
+                                multiple: 0,
+                                field: "__file__",
+                                done: function (res) {
+                                    if (res.code > 0) return layui.layer.msg(res.msg);
+                                    this.item.prev().val(res.data.url).prev().attr("src", res.data.url);
+                                }
+                            });
                         });
                         
                         

@@ -66,6 +66,31 @@ class Job implements Consumer
                 }
             }
         }
+
+        if ($event == 'order_expire') {
+            $id = $data['id'];
+            $order = Order::find($id);
+            if ($order && !in_array($order->status, [6, 7])) {
+                //如果还接单 退款
+                $order->status = 3;
+                $order->cancel_time = Carbon::now();
+                $order->save();
+                //退款
+                $order->refund();
+                #退优惠券
+                if ($order->coupon) {
+                    $order->coupon->withTrashed()->restore();
+                }
+                #恢复Coser时间段
+                if ($order->times->isNotEmpty()) {
+                    $order->times->each(function (UserTime $time) {
+                        $time->order_id = null;
+                        $time->status = 'available';
+                        $time->save();
+                    });
+                }
+            }
+        }
     }
 
 }

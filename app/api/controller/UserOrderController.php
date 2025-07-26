@@ -43,24 +43,29 @@ class UserOrderController extends Base
         $project_amount = 0;#项目总金额
         $coupon_amount = 0;#优惠金额
         $total_minute = 0;#总时长
-        $address = UserAddress::find($address_id);
+        $fare_amount = 0;#车费
+        $costume = null;
+
         $coser = User::find($coser_id);
-        $costume = Costume::find($costume_id);
-        if ($userCostme = UserCostume::where('user_id', $coser->id)->where('costume_id', $costume->id)->first()) {
-            $costume->image = $userCostme->image;
-        }
-        if ($address) {
-            if ($coser->fare == 0) {
-                $fare_amount = 0;
-            } else {
-                $distance = Area::getDistanceFromLngLat($address->lat, $address->lng, $coser->lat, $coser->lng);
-                $distance = ceil($distance);
-                $fare_amount = $distance * 6 * 2;
+
+        if (!empty($costume_id)) {
+            $costume = Costume::find($costume_id);
+            if ($costume) {
+                $userCostume = UserCostume::where('user_id', $coser->id)
+                    ->where('costume_id', $costume_id)
+                    ->first();
+
+                if ($userCostume) {
+                    $costume->image = $userCostume->image;
+                }
             }
-        } else {
-            $fare_amount = 0;
         }
 
+        if (!empty($address_id) && ($address = UserAddress::find($address_id)) && $coser->fare == 1) {
+            $distance = Area::getDistanceFromLngLat($address->lat, $address->lng, $coser->lat, $coser->lng);
+            $distance = ceil($distance);
+            $fare_amount = $distance * 6 * 2;
+        }
 
 
         foreach ($project_list as &$item) {
@@ -73,33 +78,14 @@ class UserOrderController extends Base
             $item['minutes'] = $project->minutes;
             $total_minute += $project->minutes * $item['num'];
         }
-
-        $need_times = $total_minute / 30;
-        $time_list = UserTime::where('user_id', $coser->id)
-            ->gtNow()
-            ->where('id', '>=', $time_id)
-            ->orderBy('id', 'asc')
-            ->take($need_times)
-            ->get();
-        foreach ($time_list as $time) {
-            if ($time->status != 'available') {
-                return $this->fail('时间段不足');
-            }
-        }
-
-
         $total_amount = $project_amount + $fare_amount;
 
 
-        if (!empty($coupon_id)) {
-            $cancoupon = UserCoupon::where('user_id', $request->user_id)
+        if (!empty($coupon_id) && ($cancoupon = UserCoupon::where('user_id', $request->user_id)
                 ->where('with_amount', '<=', $total_amount)
                 ->where('expire_time', '>', Carbon::now())
                 ->where('id', $coupon_id)
-                ->first();
-            if (empty($cancoupon)) {
-                return $this->fail('优惠券不存在');
-            }
+                ->first())) {
             $total_amount = $total_amount - $cancoupon->amount;
             $coupon_amount = $cancoupon->amount;
         }

@@ -36,6 +36,10 @@ class CoserController extends Base
         $lng = $request->post('lng');
         $keyword = $request->post('keyword');
 
+        if (empty($lat) || empty($lng)){
+            return $this->fail('请选择经纬度');
+        }
+
         $baseQuery = User::where(['city_id' => $city_id, 'role' => 2]);
         $paginator = $baseQuery
             ->when(!empty($keyword),function ($query)use($keyword){
@@ -95,17 +99,20 @@ class CoserController extends Base
         $id = $request->post('id');
         $lat = $request->post('lat');
         $lng = $request->post('lng');
+        if (empty($lat) || empty($lng)){
+            return $this->fail('请选择经纬度');
+        }
         $row = User::with(['photo'])->find($id);
         $distance = Area::getDistanceFromLngLat($lat, $lng, $row->lat, $row->lng);
         $row->is_collect = UserCollect::where([
             'user_id' => $request->user_id,
-            'to_user_id' => $id
+            'coser_id' => $id
         ])->exists();
 
         /**@var UserTime $firstTime */
         $firstTime = $row->times()->where('time', '>=',  Carbon::now())->orderBy('id')->whereIn('status', ['available', 'booked'])->first();
         $row->current_status = $firstTime?->status;
-        $row->first_time = $firstTime?->time;
+        $row->first_time = $firstTime?->time->format('H:i');
         $row->distance = $distance;
         return $this->success('成功', $row);
     }

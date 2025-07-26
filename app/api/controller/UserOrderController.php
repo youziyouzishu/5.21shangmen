@@ -55,7 +55,7 @@ class UserOrderController extends Base
             } else {
                 $distance = Area::getDistanceFromLngLat($address->lat, $address->lng, $coser->lat, $coser->lng);
                 $distance = ceil($distance);
-                $fare_amount = $distance * 6;
+                $fare_amount = $distance * 6 * 2;
             }
         } else {
             $fare_amount = 0;
@@ -162,7 +162,7 @@ class UserOrderController extends Base
             $fare_amount = 0;
         } else {
             $distance = ceil($distance);
-            $fare_amount = $distance * 6;
+            $fare_amount = $distance * 6 * 2;
         }
 
 

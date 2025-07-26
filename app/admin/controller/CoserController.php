@@ -99,7 +99,7 @@ class CoserController extends Crud
                     }
                 }
                 // 批量插入数据
-                $row->user->time()->createMany($data);
+                $row->user->times()->createMany($data);
             }
             return parent::update($request);
         }

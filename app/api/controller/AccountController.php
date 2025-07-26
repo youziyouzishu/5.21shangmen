@@ -8,13 +8,14 @@ use app\api\basic\Base;
 use Carbon\Carbon;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use EasyWeChat\OpenPlatform\Application;
-use plugin\admin\app\common\Util;
 use support\Request;
 use support\Response;
 use Tinywan\Jwt\JwtToken;
 
 class AccountController extends Base
 {
+
+    protected array $noNeedLogin = ['*'];
     /**
      * 登录
      * @param Request $request
@@ -88,7 +89,7 @@ class AccountController extends Base
             'id' => $user->id,
             'client' => JwtToken::TOKEN_CLIENT_MOBILE
         ]);
-        return $this->success('登录成功', ['user' => $user, 'token' => $token]);
+        return $this->success('登录成功', ['user' => $user->refresh(), 'token' => $token]);
     }
 
     /**

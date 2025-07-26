@@ -7,3 +7,6 @@
 /tests/tmp
 /tests/.phpunit.result.cache
 composer.lock
+/_ide_helper_eloquent.php
+/plugin/admin/public/upload/
+/.lingma/

@@ -13,7 +13,7 @@ use support\Response;
  */
 class UploadController extends Base
 {
-    protected array $noNeedLogin = [];
+    protected array $noNeedLogin = ['*'];
 
     /**
      * 上传文件

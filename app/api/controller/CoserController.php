@@ -34,24 +34,29 @@ class CoserController extends Base
         $status = $request->post('status');#0全部 1可预约 2服务中
         $lat = $request->post('lat');
         $lng = $request->post('lng');
+        $keyword = $request->post('keyword');
 
         $baseQuery = User::where(['city_id' => $city_id, 'role' => 2]);
-        $paginator = $baseQuery->when(!empty($status), function ($query) use ($status) {
-            if ($status == 1) {
-                $query->whereHas('times', function ($query)  {
-                    $query->gtNow()->where('status', 'available');
+        $paginator = $baseQuery
+            ->when(!empty($keyword),function ($query)use($keyword){
+                $query->whereLike('name', $keyword);
+            })
+            ->when(!empty($status), function ($query) use ($status) {
+                if ($status == 1) {
+                    $query->whereHas('times', function ($query) {
+                        $query->gtNow()->where('status', 'available');
+                    });
+                }
+                if ($status == 2) {
+                    $query->whereHas('times', function ($query) {
+                        $query->gtNow()->where('status', 'booked');
+                    });
+                }
+            }, function ($query) {
+                $query->whereHas('times', function ($query) {
+                    $query->gtNow()->whereIn('status', ['available', 'booked']);
                 });
-            }
-            if ($status == 2) {
-                $query->whereHas('times', function ($query)  {
-                    $query->gtNow()->where('status', 'booked');
-                });
-            }
-        }, function ($query) {
-            $query->whereHas('times', function ($query)  {
-                $query->gtNow()->whereIn('status', ['available', 'booked']);
             });
-        });
 
         // 计算距离并按距离排序
         $paginator = $paginator->selectRaw('*, 
@@ -65,13 +70,13 @@ class CoserController extends Base
         $rows = $paginator->getCollection()->map(function (User $user) use ($request) {
             // 获取第一个时间段
             /** @var UserTime $firstTime */
-            $firstTime = $user->fromTimesGTNow()->whereIn('status', ['available', 'booked'])->first();
+            $firstTime = $user->times()->where('time', '>=',  Carbon::now())->orderBy('id')->whereIn('status', ['available', 'booked'])->first();
             return array_merge($user->toArray(), [
                 'current_status' => $firstTime?->status,
-                'first_time' => $firstTime?->time,
+                'first_time' => $firstTime?->time->format('H:i'),
                 'is_collect' => UserCollect::where([
                     'user_id' => $request->user_id,
-                    'to_user_id' => $user->id
+                    'coser_id' => $user->id
                 ])->exists(),
 //                'distance' => $user->distance // 添加距离信息
             ]);
@@ -98,7 +103,7 @@ class CoserController extends Base
         ])->exists();
 
         /**@var UserTime $firstTime */
-        $firstTime = $row->fromTimesGTNow()->whereIn('status', ['available', 'booked'])->first();
+        $firstTime = $row->times()->where('time', '>=',  Carbon::now())->orderBy('id')->whereIn('status', ['available', 'booked'])->first();
         $row->current_status = $firstTime?->status;
         $row->first_time = $firstTime?->time;
         $row->distance = $distance;
@@ -113,7 +118,7 @@ class CoserController extends Base
     function getCommentList(Request $request)
     {
         $id = $request->post('id');
-        $rows = OrderComment::where('coser_id',$id)
+        $rows = OrderComment::where('coser_id', $id)
             ->with(['user'])
             ->orderByDesc('id')
             ->paginate()
@@ -190,22 +195,22 @@ class CoserController extends Base
     function index(Request $request)
     {
         $user = User::find($request->user_id);
-        $firstTime = $user->fromTimesGTNow()->first();
-        if ($firstTime->status == 'available'){
+        $firstTime = $user->times()->where('time', '>=',  Carbon::now())->orderBy('id')->first();
+        if ($firstTime->status == 'available') {
             $status_text = '接单中';
         }
-        if ($firstTime->status == 'unavailable'){
+        if ($firstTime->status == 'unavailable') {
             $status_text = '休息中';
         }
-        if ($firstTime->status == 'booked'){
+        if ($firstTime->status == 'booked') {
             $status_text = '服务中';
         }
-        $query = Order::where('coser_id',$request->user_id)->whereDate('end_service_time',Carbon::today());
+        $query = Order::where('coser_id', $request->user_id)->whereDate('end_service_time', Carbon::today());
         $today_amount = $query->sum('pay_amount');
         $project_amount = $query->sum('project_amount');
         $fare_amount = $query->sum('fare_amount');
         $count = $query->count();
-        return $this->success('成功',[
+        return $this->success('成功', [
             'status_text' => $status_text,
             'today_amount' => $today_amount,
             'project_amount' => $project_amount,
@@ -226,12 +231,12 @@ class CoserController extends Base
         $end_date = $request->post('end_date');
         $start_date = Carbon::parse($start_date);
         $end_date = Carbon::parse($end_date);
-        $month_project_amount = CoserReport::where('coser_id',$request->user_id)->whereBetween('date',[$start_date,$end_date])->sum('project_amount');
-        $month_fare_amount = CoserReport::where('coser_id',$request->user_id)->whereBetween('date',[$start_date,$end_date])->sum('fare_amount');
-        $month_count = CoserReport::where('coser_id',$request->user_id)->whereBetween('date',[$start_date,$end_date])->sum('order_count');
+        $month_project_amount = CoserReport::where('coser_id', $request->user_id)->whereBetween('date', [$start_date, $end_date])->sum('project_amount');
+        $month_fare_amount = CoserReport::where('coser_id', $request->user_id)->whereBetween('date', [$start_date, $end_date])->sum('fare_amount');
+        $month_count = CoserReport::where('coser_id', $request->user_id)->whereBetween('date', [$start_date, $end_date])->sum('order_count');
         $month_amount = $month_project_amount + $month_fare_amount;
-        $list = CoserReport::where('coser_id',$request->user_id)->whereBetween('date',[$start_date,$end_date])->orderByDesc('id')->get();
-        return $this->success('成功',[
+        $list = CoserReport::where('coser_id', $request->user_id)->whereBetween('date', [$start_date, $end_date])->orderByDesc('id')->get();
+        return $this->success('成功', [
             'month_project_amount' => $month_project_amount,
             'month_fare_amount' => $month_fare_amount,
             'month_amount' => $month_amount,
@@ -251,16 +256,15 @@ class CoserController extends Base
         $date = Carbon::parse($date);
         $year = $date->year;
         $month = $date->month;
-        $orders = Order::where('coser_id',$request->user_id)
+        $orders = Order::where('coser_id', $request->user_id)
             ->with(['items'])
-            ->whereYear('end_service_time',$year)
-            ->whereMonth('end_service_time',$month)
+            ->whereYear('end_service_time', $year)
+            ->whereMonth('end_service_time', $month)
             ->orderByDesc('id')
             ->paginate()
             ->items();
-        return $this->success('成功',$orders);
+        return $this->success('成功', $orders);
     }
-
 
 
 }

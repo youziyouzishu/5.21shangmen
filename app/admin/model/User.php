@@ -52,7 +52,6 @@ use support\Db;
  * @property float $rate 结算率
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\CoserReport> $report
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\Order> $orders
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User fromTimesGTNow()
  * @mixin \Eloquent
  */
 class User extends Base
@@ -110,17 +109,6 @@ class User extends Base
         } while (self::where(['invitecode' => $invitecode])->exists());
         return $invitecode;
     }
-
-    /**
-     * 获取用户大于当前的时间
-     * @param Builder $query
-     * @return void
-     */
-    function scopeFromTimesGTNow(Builder $query)
-    {
-        $this->times()->where('time', '>=',  Carbon::now())->orderBy('id');
-    }
-    
     function times()
     {
         return $this->hasMany(UserTime::class, 'user_id', 'id');

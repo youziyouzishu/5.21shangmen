@@ -13,7 +13,11 @@ class IndexController extends Base
     protected array $noNeedLogin = ['*'];
     public function index(Request $request)
     {
-        dump(Carbon::parse('2025-06-21'),Carbon::today());
+        $user = User::where('id',1)->first();
+        /** @var UserTime $firstTime */
+        $firstTime  = $user->times()->where('time', '>=',  Carbon::now())->orderBy('id')->first();
+        dump($firstTime?->time->format('H:i'));
+        return $this->success('成功', $firstTime);
     }
 
 }

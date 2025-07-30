@@ -117,6 +117,7 @@ class Order extends Base
     protected $appends = [
         'status_text',
         'pay_type_text',
+        'status_color'
     ];
 
     protected $casts = [
@@ -212,7 +213,7 @@ class Order extends Base
         return [
             0 => '待支付',
             1 => '待接单',
-            2 => '取消',
+            2 => '订单取消',
             3 => '接单超时',
             4 => '待出发',
             5 => '服务中',
@@ -220,6 +221,31 @@ class Order extends Base
             7 => '已完成',
             8 => '在路上',
             9 => '待服务',
+        ];
+    }
+
+    // 获取状态颜色
+    function getStatusColorAttribute($value)
+    {
+        $value = $value !== null ? $value : $this->status;
+        $list = $this->getStatusColorList();
+        return $list[$value] ?? '#999'; // 默认灰色
+    }
+
+    // 状态颜色列表（可以用十六进制、颜色名，或 Tailwind/Bulma 等类名）
+    function getStatusColorList()
+    {
+        return [
+            0 => '#f39c12', // 待支付：橙色
+            1 => '#3498db', // 待接单：蓝色
+            2 => '#e74c3c', // 取消：红色
+            3 => '#c0392b', // 接单超时：深红
+            4 => '#8e44ad', // 待出发：紫色
+            5 => '#1abc9c', // 服务中：青色
+            6 => '#f1c40f', // 待评价：金色
+            7 => '#2ecc71', // 已完成：绿色
+            8 => '#2980b9', // 在路上：深蓝
+            9 => '#d35400', // 待服务：橙红
         ];
     }
 

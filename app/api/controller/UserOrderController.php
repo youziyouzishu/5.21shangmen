@@ -389,7 +389,7 @@ class UserOrderController extends Base
         $order->status = 7;
         $order->finish_time = Carbon::now();
         $order->save();
-        $order->comment()->create([
+        $order->comment->create([
             'grade' => $grade,
             'tags' => $tags,
             'cryptonym' => $cryptonym,

@@ -30,12 +30,12 @@ class UserTimeController extends Base
             ->orderBy('id','asc')
             ->get();
         $rows->each(function (UserTime $item)use($now){
-            $item->time =  $item->time->format('H:i');
             if ($item->time < $now) {
                 // time 小于当前时间
                 $item->status = 'unavailable'; // 标记为不可约
             }
         });
+        $rows->append('time_formatted');
         return $this->success('成功',$rows);
     }
 

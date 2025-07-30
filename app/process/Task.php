@@ -14,18 +14,62 @@ class Task
     {
         // 每天的7点50执行，注意这里省略了秒位
         new Crontab('50 7 * * *', function () {
-            $coser = User::where('role', 2)->get();
-            #增加服务时间
-            foreach ($coser as $item) {
-                $rows = $item->time()->orderBy('id')->take(48)->get();
-                $data = [];
-                $rows->each(function (UserTime $row)use(&$data) {
-                    $data[] = [
-                        'time' => $row->time->addDays(1),
-                        'status' => $row->status == 'booked' ? 'available' : $row->status,
-                    ];
-                });
-                $item->time()->createMany($data);
+            $cosers = User::where('role', 2)->get();
+            $today = Carbon::today();
+
+            foreach ($cosers as $coser) {
+                $yesterday = $today->copy()->subDay();
+
+                // 获取昨天的所有时间段（时间 + 状态）
+                $yesterdayRecords = $coser->times()
+                    ->whereDate('time', $yesterday)
+                    ->get()
+                    ->mapWithKeys(function ($item) {
+                        $key = Carbon::parse($item->time)->format('H:i');
+                        return [
+                            $key => [
+                                'base_time' => Carbon::parse($item->time),
+                                'status'    => $item->status,
+                            ],
+                        ];
+                    });
+
+                if ($yesterdayRecords->isEmpty()) {
+                    echo "用户 {$coser->id} 昨天无服务时间记录，跳过。\n";
+                    continue;
+                }
+
+                // 获取未来 4 天已有的 time 列表
+                $existingTimes = $coser->times()
+                    ->where('time', '>=', $today)
+                    ->where('time', '<', $today->copy()->addDays(4))
+                    ->get()
+                    ->pluck('time')
+                    ->map(fn($t) => $t->format('Y-m-d H:i:s'))
+                    ->toArray();
+
+                $newData = [];
+
+                // 遍历昨天的时间段，在未来 4 天同步补全
+                for ($day = 0; $day < 4; $day++) {
+                    foreach ($yesterdayRecords as $timeKey => $record) {
+                        // 同步到未来的同一时间段
+                        $futureTime = $today->copy()->addDays($day)->setTimeFrom($record['base_time']);
+                        $futureTimeStr = $futureTime->format('Y-m-d H:i:s');
+
+                        if (!in_array($futureTimeStr, $existingTimes)) {
+                            $newData[] = [
+                                'time'   => $futureTime,
+                                'status' => $record['status'] ?? 'available',
+                            ];
+                        }
+                    }
+                }
+
+                if (!empty($newData)) {
+                    $coser->times()->createMany($newData);
+                    echo "用户 {$coser->id} 补全了 " . count($newData) . " 条时间段。\n";
+                }
             }
 
             $yesterday = Carbon::yesterday();

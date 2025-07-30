@@ -9,7 +9,7 @@ use support\Db;
 
 
 /**
- *
+ * 
  *
  * @property int $id 主键
  * @property int $admin_id 代理
@@ -22,6 +22,7 @@ use support\Db;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminMoneyLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminMoneyLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminMoneyLog query()
+ * @property-read \app\admin\model\Admin|null $admin
  * @mixin \Eloquent
  */
 class AdminMoneyLog extends Base

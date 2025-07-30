@@ -21,6 +21,7 @@ use plugin\admin\app\model\Base;
  * @property int|null $order_id 订单ID
  * @property \Illuminate\Support\Carbon $time 时间
  * @method static Builder<static>|UserTime gtNow()
+ * @property-read mixed $time_formatted
  * @mixin \Eloquent
  */
 class UserTime extends Base
@@ -53,6 +54,11 @@ class UserTime extends Base
     function scopeGtNow(Builder $query)
     {
         $query->where('time', '>=',  Carbon::now())->orderBy('id');
+    }
+
+    public function getTimeFormattedAttribute()
+    {
+        return $this->time ? $this->time->format('H:i') : null;
     }
     
     

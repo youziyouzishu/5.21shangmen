@@ -18,6 +18,7 @@ use plugin\admin\app\model\Base;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCostume newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCostume newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCostume query()
+ * @property-read \app\admin\model\Costume|null $costume
  * @mixin \Eloquent
  */
 class UserCostume extends Base
@@ -27,7 +28,7 @@ class UserCostume extends Base
      *
      * @var string
      */
-    protected $table = 'wa_user_costume_image';
+    protected $table = 'wa_user_costume';
 
     /**
      * The primary key associated with the table.
@@ -44,6 +45,11 @@ class UserCostume extends Base
         'created_at',
         'updated_at',
     ];
+
+    function costume()
+    {
+        return $this->belongsTo(Costume::class, 'costume_id','id');
+    }
     
     
     

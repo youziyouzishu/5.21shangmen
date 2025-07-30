@@ -44,6 +44,7 @@ class UserOrderController extends Base
         $coupon_amount = 0;#优惠金额
         $total_minute = 0;#总时长
         $fare_amount = 0;#车费
+        $total_distance = 0;#总距离
         $costume = null;
 
         $coser = User::find($coser_id);
@@ -64,8 +65,18 @@ class UserOrderController extends Base
         if (!empty($address_id) && ($address = UserAddress::find($address_id)) && $coser->fare == 1) {
             $distance = Area::getDistanceFromLngLat($address->lat, $address->lng, $coser->lat, $coser->lng);
             $distance = ceil($distance);
-            $fare_amount = $distance * 6 * 2;
+            $total_distance = $distance * 2;
+            $fare_amount = $total_distance * 6;
         }
+        if ($coser->fare == 1){
+            $fare_text = '滴滴/出租';
+            $distance_text = '全程共'.$total_distance .'公里，出行收取往返路费，每公里6元。';
+        }else{
+            $fare_text = '免费';
+            $distance_text = '本次行程免费';
+        }
+
+
 
 
         foreach ($project_list as &$item) {
@@ -94,6 +105,12 @@ class UserOrderController extends Base
             ->where('with_amount', '<=', $total_amount)
             ->where('expire_time', '>', Carbon::now())
             ->get();
+        $unavailable_coupon = UserCoupon::where('user_id', $request->user_id)
+            ->where(function ($query) use ($total_amount) {
+                $query->where('with_amount', '>', $total_amount)
+                    ->orWhere('expire_time', '<', Carbon::now());
+            })
+            ->get();
         return $this->success('成功', [
             'project_amount' => $project_amount,
             'pay_amount' => $total_amount,
@@ -103,7 +120,11 @@ class UserOrderController extends Base
             'costume' => $costume,
             'coser' => $coser,
             'available_coupon' => $available_coupon,
+            'unavailable_coupon' =>  $unavailable_coupon,
             'total_minute' => $total_minute,
+            'fare_text' => $fare_text,
+            'distance_text' => $distance_text,
+            'total_distance' => $total_distance,
         ]);
     }
 

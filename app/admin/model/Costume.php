@@ -7,7 +7,7 @@ use plugin\admin\app\model\Base;
 
 
 /**
- *
+ * 
  *
  * @property int $id 主键
  * @property string $image 图片
@@ -16,6 +16,7 @@ use plugin\admin\app\model\Base;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Costume newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Costume newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Costume query()
+ * @property string $name 名称
  * @mixin \Eloquent
  */
 class Costume extends Base
@@ -36,6 +37,7 @@ class Costume extends Base
 
 
     protected $fillable = [
+        'name',
         'image',
         'created_at',
         'updated_at',

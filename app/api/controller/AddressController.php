@@ -150,8 +150,7 @@ class AddressController extends Base
     {
         $rows = UserAddress::where(['user_id' => $request->user_id])
             ->latest()
-            ->paginate()
-            ->items();
+            ->get();
         return $this->success('成功', $rows);
     }
 

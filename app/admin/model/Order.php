@@ -188,13 +188,13 @@ class Order extends Base
                     'total' => (int)bcmul($this->pay_amount, 100, 2),
                     'currency' => 'CNY',
                 ],
-                'reason' => '接单超时',
+                'reason' => '订单超时',
                 '_action' => 'app', // app 退款
             ]),
             2 => \Yansongda\Pay\Pay::alipay($config)->refund([
                 'out_trade_no' => $this->ordersn,
                 'refund_amount' => $this->pay_amount,
-                'refund_reason' => '接单超时',
+                'refund_reason' => '订单超时',
                 '_action' => 'app', // 退款 APP 订单
             ]),
         };
@@ -221,6 +221,7 @@ class Order extends Base
             7 => '已完成',
             8 => '在路上',
             9 => '待服务',
+            10 => '服务超时'
         ];
     }
 
@@ -246,6 +247,7 @@ class Order extends Base
             7 => '#2ecc71', // 已完成：绿色
             8 => '#2980b9', // 在路上：深蓝
             9 => '#d35400', // 待服务：橙红
+            10 => '#e67e22',// 服务超时：橙色
         ];
     }
 

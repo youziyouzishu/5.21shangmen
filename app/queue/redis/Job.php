@@ -71,8 +71,8 @@ class Job implements Consumer
             $id = $data['id'];
             $order = Order::find($id);
             if ($order && !in_array($order->status, [6, 7])) {
-                //如果还接单 退款
-                $order->status = 3;
+                //如果还未完成 退款
+                $order->status = 10;
                 $order->cancel_time = Carbon::now();
                 $order->save();
                 //退款

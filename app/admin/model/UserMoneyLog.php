@@ -10,8 +10,6 @@ use support\Db;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $user_id 用户
  * @property string $money 变更余额

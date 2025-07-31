@@ -5,8 +5,6 @@ namespace app\admin\model;
 use plugin\admin\app\model\Base;
 
 /**
- * 
- *
  * @property int $id 主键
  * @property string $name 项目名称
  * @property string $price 价格

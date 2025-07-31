@@ -7,8 +7,6 @@ use plugin\admin\app\model\Base;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $user_id Corser
  * @property int $costume_id 服饰

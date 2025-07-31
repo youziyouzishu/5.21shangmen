@@ -7,8 +7,6 @@ use support\Db;
 
 
 /**
- * 
- *
  * @property int $id ID
  * @property string $username 用户名
  * @property string $nickname 昵称

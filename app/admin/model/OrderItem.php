@@ -7,8 +7,6 @@ use plugin\admin\app\model\Base;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $order_id 订单
  * @property int $project_id 项目

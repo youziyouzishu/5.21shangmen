@@ -9,8 +9,6 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 /**
- * 
- *
  * @property int $id ID
  * @property int|null $pid 父id
  * @property string|null $shortname 简称

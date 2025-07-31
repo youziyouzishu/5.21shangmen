@@ -9,8 +9,6 @@ use support\Db;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $admin_id 代理
  * @property string $money 变更余额

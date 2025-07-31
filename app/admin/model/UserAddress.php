@@ -9,8 +9,6 @@ use support\Db;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $user_id 用户
  * @property int $default 默认:0=否,1=是

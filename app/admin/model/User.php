@@ -9,8 +9,6 @@ use plugin\admin\app\model\Base;
 use support\Db;
 
 /**
- * 
- *
  * @property int $id 主键
  * @property string $username 用户名
  * @property string $nickname 昵称
@@ -52,6 +50,7 @@ use support\Db;
  * @property float $rate 结算率
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\CoserReport> $report
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\Order> $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserCoupon> $coupon
  * @mixin \Eloquent
  */
 class User extends Base
@@ -164,5 +163,11 @@ class User extends Base
     {
         return $this->hasMany(Order::class, 'coser_id', 'id');
     }
+
+    function coupon()
+    {
+        return $this->hasMany(UserCoupon::class, 'user_id', 'id');
+    }
+
 
 }

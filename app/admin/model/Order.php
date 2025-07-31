@@ -6,8 +6,6 @@ use plugin\admin\app\model\Base;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $user_id 用户
  * @property int $coser_id Coser
@@ -62,6 +60,7 @@ use plugin\admin\app\model\Base;
  * @property string|null $arrive_image 到达拍照
  * @property string|null $arrive_mark 到达备注
  * @property \Illuminate\Support\Carbon|null $should_end_service_time 应该结束时间
+ * @property-read mixed $status_color
  * @mixin \Eloquent
  */
 class Order extends Base

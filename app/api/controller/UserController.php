@@ -27,10 +27,12 @@ class UserController extends Base
      */
     function getUserInfo(Request $request)
     {
-        $row = User::find($request->user_id);
+        $row = User::withCount(['coupon','collect'])->find($request->user_id);
         if (!$row) {
             throw new JwtRefreshTokenExpiredException();
         }
+
+
         return $this->success('成功', $row);
     }
 

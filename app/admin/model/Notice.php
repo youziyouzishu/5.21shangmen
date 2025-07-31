@@ -5,8 +5,6 @@ namespace app\admin\model;
 use plugin\admin\app\model\Base;
 
 /**
- * 
- *
  * @property integer $id 主键(主键)
  * @property string $title 标题
  * @property string $content 内容

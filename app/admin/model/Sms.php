@@ -12,8 +12,6 @@ use plugin\admin\app\model\Base;
 use support\Log;
 
 /**
- * 
- *
  * @property int $id 主键
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间

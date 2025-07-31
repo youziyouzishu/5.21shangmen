@@ -6,8 +6,6 @@ use plugin\admin\app\model\Base;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property int $coser_id Cosor
  * @property string $project_amount 项目金额

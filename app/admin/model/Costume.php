@@ -7,8 +7,6 @@ use plugin\admin\app\model\Base;
 
 
 /**
- * 
- *
  * @property int $id 主键
  * @property string $image 图片
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间

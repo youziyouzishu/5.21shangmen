@@ -42,7 +42,6 @@ use support\Db;
  * @property string|null $lat 纬度
  * @property string|null $lng 经度
  * @property string|null $sign 个性签名
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserPhoto> $photo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserCostume> $costume
  * @property int $fare 出行费:0=免费,1=有出行费
  * @property string|null $openid 微信标识
@@ -51,6 +50,7 @@ use support\Db;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\CoserReport> $report
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\Order> $orders
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserCoupon> $coupon
+ * @property string|null $photo 相册
  * @mixin \Eloquent
  */
 class User extends Base
@@ -97,9 +97,9 @@ class User extends Base
         'role',
         'status',
         'openid',
+        'sign',
+        'photo'
     ];
-
-
 
     public static function generateInvitecode()
     {
@@ -108,6 +108,7 @@ class User extends Base
         } while (self::where(['invitecode' => $invitecode])->exists());
         return $invitecode;
     }
+
     function times()
     {
         return $this->hasMany(UserTime::class, 'user_id', 'id');
@@ -121,11 +122,6 @@ class User extends Base
     function fans()
     {
         return $this->hasMany(UserCollect::class, 'coser_id', 'id');
-    }
-
-    function photo()
-    {
-        return $this->hasMany(UserPhoto::class, 'user_id', 'id');
     }
 
     function costume()

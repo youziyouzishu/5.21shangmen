@@ -102,7 +102,7 @@ class CoserController extends Base
         if (empty($lat) || empty($lng)){
             return $this->fail('请选择经纬度');
         }
-        $row = User::with(['photo'])->find($id);
+        $row = User::find($id);
         $distance = Area::getDistanceFromLngLat($lat, $lng, $row->lat, $row->lng);
         $row->is_collect = UserCollect::where([
             'user_id' => $request->user_id,

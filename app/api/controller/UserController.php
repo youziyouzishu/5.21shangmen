@@ -44,7 +44,7 @@ class UserController extends Base
     function editUserInfo(Request $request)
     {
         $param = $request->post();
-        $fields = ['nickname', 'avatar', 'sex', 'birthday', 'sign'];
+        $fields = ['nickname', 'avatar', 'sex', 'birthday', 'sign', 'photo'];
         foreach ($param as $key => $value) {
             if (!in_array($key, $fields)) {
                 unset($param[$key]);
@@ -108,43 +108,43 @@ class UserController extends Base
     }
 
 
-    /**
-     * 获取相册
-     * @param Request $request
-     * @return Response
-     */
-    function getPhotos(Request $request)
-    {
-        $rows = UserPhoto::where('user_id', $request->user_id)->get();
-        return $this->success('成功', $rows);
-    }
-
-    /**
-     * 添加相册
-     * @param Request $request
-     * @return Response
-     */
-    function addPhoto(Request $request)
-    {
-        $photo = $request->post('photo');
-        UserPhoto::create([
-            'user_id' => $request->user_id,
-            'photo' => $photo,
-        ]);
-        return $this->success('成功');
-    }
-
-    /**
-     * 删除相册
-     * @param Request $request
-     * @return Response
-     */
-    function deletePhoto(Request $request)
-    {
-        $id = $request->post('id');
-        UserPhoto::find($id)->delete();
-        return $this->success('成功');
-    }
+//    /**
+//     * 获取相册
+//     * @param Request $request
+//     * @return Response
+//     */
+//    function getPhotos(Request $request)
+//    {
+//        $rows = UserPhoto::where('user_id', $request->user_id)->get();
+//        return $this->success('成功', $rows);
+//    }
+//
+//    /**
+//     * 添加相册
+//     * @param Request $request
+//     * @return Response
+//     */
+//    function addPhoto(Request $request)
+//    {
+//        $photo = $request->post('photo');
+//        UserPhoto::create([
+//            'user_id' => $request->user_id,
+//            'photo' => $photo,
+//        ]);
+//        return $this->success('成功');
+//    }
+//
+//    /**
+//     * 删除相册
+//     * @param Request $request
+//     * @return Response
+//     */
+//    function deletePhoto(Request $request)
+//    {
+//        $id = $request->post('id');
+//        UserPhoto::find($id)->delete();
+//        return $this->success('成功');
+//    }
 
     /**
      * 收藏列表

@@ -5,8 +5,6 @@ namespace app\admin\model;
 use plugin\admin\app\model\Base;
 
 /**
- * 
- *
  * @property integer $id 主键(主键)
  * @property integer $user_id 用户
  * @property string $class_name 分类名称

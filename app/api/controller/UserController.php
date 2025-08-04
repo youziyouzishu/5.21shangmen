@@ -162,9 +162,10 @@ class UserController extends Base
             ->getCollection();
         foreach ($rows as $row) {
             $distance = Area::getDistanceFromLngLat($lat, $lng, $row->coser->lat, $row->coser->lng);
-            $firstTime = $row->coser->time()->where('date', Carbon::now())->where('time', '>=', Carbon::now()->format('H:i'))->whereIn('status', ['available', 'booked'])->orderBy('time', 'asc')->first();
+            $firstTime = $row->coser->times()->where('time', '>=',  Carbon::now())->whereIn('status', ['available', 'booked'])->orderBy('id')->first();
             $row->coser->current_status = $firstTime ? $firstTime->status : null;
             $row->coser->first_time = $firstTime ? $firstTime->time : null;
+            $row->coser->first_time = $firstTime?->time->format('H:i');
             $row->coser->distance = $distance;
         }
 

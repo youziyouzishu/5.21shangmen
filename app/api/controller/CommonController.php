@@ -72,6 +72,18 @@ class CommonController extends Base
         return $this->success('请求成功', $rows);
     }
 
+    /**
+     * 获取配置项
+     * @param Request $request
+     * @return \support\Response
+     */
+    function getOption(Request $request)
+    {
+        $name = 'system_config';
+        $config = Option::where('name', $name)->value('value');
+        return $this->success('成功',json_decode($config));
+    }
+
 
 
 

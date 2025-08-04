@@ -71,9 +71,7 @@ class ConfigController extends Base
         $config = $this->getByDefault();
         $data = [];
         foreach ($post as $section => $items) {
-            if (!isset($config[$section])) {
-                continue;
-            }
+
             switch ($section) {
                 case 'logo':
                     $data[$section]['title'] = htmlspecialchars($items['title'] ?? '');
@@ -100,6 +98,10 @@ class ConfigController extends Base
                     $data[$section]['index']['id'] = Util::filterNum($items['index']['id'] ?? '0');
                     $data[$section]['index']['href'] = Util::filterUrlPath($items['index']['href'] ?? '');
                     $data[$section]['index']['title'] = htmlspecialchars($items['index']['title'] ?? '首页');
+                    break;
+                case 'rule':
+                    $data[$section]['privacy_policy'] = $items['privacy_policy'] ?? '';
+                    $data[$section]['user_agreement'] = $items['user_agreement'] ?? '';
                     break;
                 case 'theme':
                     $data[$section]['defaultColor'] = Util::filterNum($items['defaultColor'] ?? '2');

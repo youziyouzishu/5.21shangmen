@@ -23,6 +23,7 @@
                     <li>菜单配置</li>
                     <li>页面配置</li>
                     <li>协议配置</li>
+                    <li>客服配置</li>
                 </ul>
                 <div class="layui-tab-content">
 
@@ -202,6 +203,50 @@
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
                                     <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="saveRuleInfo">
+                                        提交
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+
+                    <div class="layui-tab-item">
+
+                        <form class="layui-form" lay-filter="kefuInfo">
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">客服二维码</label>
+                                <div class="layui-input-block">
+                                    <img class="img-4" src=""/>
+                                    <input type="text" style="display:none" name="kefu_image" value="" />
+                                    <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="kefu_image" permission="app.admin.upload.image">
+                                        <i class="layui-icon layui-icon-upload"></i>上传图片
+                                    </button>
+                                    <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="attachment-choose-kefu_image" permission="app.admin.upload.attachment">
+                                        <i class="layui-icon layui-icon-align-left"></i>选择图片
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">服务时间</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="kefu_time" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">客服电话</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="kefu_mobile" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="saveKefuInfo">
                                         提交
                                     </button>
                                 </div>
@@ -412,6 +457,56 @@
                 });
             });
 
+            layui.use(["upload", "layer", "popup"], function() {
+                let $ = layui.$;
+                let form = layui.form;
+
+                // image
+                let input = $("#kefu_image").prev();
+                input.prev().attr("src", input.val());
+                layui.$("#attachment-choose-kefu_image").on("click", function() {
+                    parent.layer.open({
+                        type: 2,
+                        title: "选择附件",
+                        content: "/app/admin/upload/attachment?ext=jpg,jpeg,png,gif,bmp",
+                        area: ["95%", "90%"],
+                        success: function (layero, index) {
+                            parent.layui.$("#layui-layer" + index).data("callback", function (data) {
+                                input.val(data.url).prev().attr("src", data.url);
+                            });
+                        }
+                    });
+                });
+                layui.upload.render({
+                    elem: "#kefu_image",
+                    url: "/app/admin/upload/avatar",
+                    acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
+                    done: function (res) {
+                        if (res.code) {
+                            return layui.popup.failure(res.msg);
+                        }
+                        this.item.prev().val(res.data.url).prev().attr("src", res.data.url);
+                    }
+                });
+
+                // 提交
+                form.on("submit(saveKefuInfo)", function(data){
+                    $.ajax({
+                        url: "/app/admin/config/update",
+                        dataType: "json",
+                        type: "POST",
+                        data: {kefu: data.field},
+                        success: function (res) {
+                            if (res.code) {
+                                return layui.popup.failure(res.msg);
+                            }
+                            return layui.popup.success("操作成功");
+                        }
+                    });
+                    return false;
+                });
+            });
+
             layui.use(["form"], function () {
                 let form = layui.form;
                 let $ = layui.$;
@@ -424,7 +519,9 @@
                         }
                         form.val("baseInfo", res.logo);
                         form.val("ruleInfo", res.rule);
+                        form.val("kefuInfo", res.kefu);
                         $("#image").prev().val(res.logo.image).prev().attr("src", res.logo.image);
+                        $("#kefu_image").prev().val(res.kefu.kefu_image).prev().attr("src", res.kefu.kefu_image);
                         form.val("menuInfo", res.menu);
                         let tab = res.tab;
                         let index = tab.index;

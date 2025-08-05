@@ -103,6 +103,11 @@ class ConfigController extends Base
                     $data[$section]['privacy_policy'] = $items['privacy_policy'] ?? '';
                     $data[$section]['user_agreement'] = $items['user_agreement'] ?? '';
                     break;
+                case 'kefu':
+                    $data[$section]['kefu_image'] = Util::filterUrlPath($items['kefu_image'] ?? '');
+                    $data[$section]['kefu_mobile'] = htmlspecialchars($items['kefu_mobile'] ?? '');
+                    $data[$section]['kefu_time'] = htmlspecialchars($items['kefu_time'] ?? '');
+                    break;
                 case 'theme':
                     $data[$section]['defaultColor'] = Util::filterNum($items['defaultColor'] ?? '2');
                     $data[$section]['defaultMenu'] = $items['defaultMenu'] ?? '' == 'dark-theme' ?  'dark-theme' : 'light-theme';

@@ -3,7 +3,6 @@
 namespace app\api\controller;
 
 use app\admin\model\UserTime;
-use app\admin\model\User;
 use app\api\basic\Base;
 use Carbon\Carbon;
 use support\Request;

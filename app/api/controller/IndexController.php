@@ -2,7 +2,6 @@
 
 namespace app\api\controller;
 
-use app\admin\model\User;
 use app\admin\model\UserTime;
 use app\api\basic\Base;
 use Carbon\Carbon;

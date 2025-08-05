@@ -7,13 +7,11 @@ use app\admin\model\Sms;
 use app\admin\model\User;
 use app\admin\model\UserCollect;
 use app\admin\model\UserCoupon;
-use app\admin\model\UserPhoto;
 use app\api\basic\Base;
 use Carbon\Carbon;
 use EasyWeChat\OpenPlatform\Application;
 use support\Request;
 use support\Response;
-use Tinywan\ExceptionHandler\Exception\BadRequestHttpException;
 use Tinywan\Jwt\Exception\JwtRefreshTokenExpiredException;
 use Tinywan\Validate\Facade\Validate;
 

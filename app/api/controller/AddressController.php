@@ -2,7 +2,6 @@
 
 namespace app\api\controller;
 
-use app\admin\model\Area;
 use app\admin\model\UserAddress;
 use app\api\basic\Base;
 use support\Db;

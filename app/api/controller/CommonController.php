@@ -68,8 +68,8 @@ class CommonController extends Base
      */
     function getNoticeList(Request $request)
     {
-        $rows = Notice::orderByDesc('id')->get();
-        return $this->success('请求成功', $rows);
+        $row = Notice::orderByDesc('id')->first();
+        return $this->success('请求成功', $row);
     }
 
     /**

@@ -69,6 +69,7 @@ class Pay
         };
     }
 
+
     /**
      * 转账
      * @param $pay_type *转账方式 1=微信,2=支付宝

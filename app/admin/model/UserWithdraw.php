@@ -19,6 +19,9 @@ use plugin\admin\app\model\Base;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserWithdraw newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserWithdraw query()
  * @property string|null $openid 微信标识
+ * @property string|null $package_info pkg
+ * @property string|null $mchid 商户id
+ * @property string|null $appid appid
  * @mixin \Eloquent
  */
 class UserWithdraw extends Base
@@ -37,7 +40,7 @@ class UserWithdraw extends Base
      */
     protected $primaryKey = 'id';
 
-    protected $fillable = ['user_id','amount','pay_type','status','ordersn','ali_account','ali_name','openid'];
+    protected $fillable = ['user_id','amount','pay_type','status','ordersn','ali_account','ali_name','openid','mchid','appid','package_info'];
     
     
 }

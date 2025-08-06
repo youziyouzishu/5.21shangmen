@@ -51,9 +51,8 @@ class WalletController extends Base
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->latest()
-            ->paginate()
-            ->getCollection()
-            ->each(function ($item) {
+            ->get()
+            ->each(function (UserMoneyLog $item) {
                 if ($item->money > 0) {
                     $item->money = '+' . $item->money;
                 }
@@ -84,10 +83,11 @@ class WalletController extends Base
             return $this->fail('余额不足');
         }
 
+
         Db::connection('plugin.admin.mysql')->beginTransaction();
         try {
             $ordersn = Order::generateOrderSn();
-            UserWithdraw::create([
+            $order = UserWithdraw::create([
                 'user_id' => $request->user_id,
                 'amount' => $amount,
                 'pay_type' => $pay_type,
@@ -96,9 +96,15 @@ class WalletController extends Base
                 'ali_account' => $ali_account,
                 'ali_name' => $ali_name,
                 'openid' => $user->openid,
+                'mchid' => config('payment.wechat.default.mch_id'),
+                'appid' => config('payment.wechat.default.app_id'),
             ]);
             User::changeMoney(-$amount,$user->id,'提现：'.$ordersn);
-            Pay::transfer($pay_type,$amount,$user->id,'提现：'.$ordersn,$user->openid,$ali_account,$ali_name);
+            $result = Pay::transfer($pay_type,$amount,$user->id,'提现：'.$ordersn,$user->openid,$ali_account,$ali_name);
+            if ($pay_type == 1){
+                $order->package_info = $result['package_info'];
+                $order->save();
+            }
             Db::connection('plugin.admin.mysql')->commit();
         }catch (\Throwable $e){
             Db::connection('plugin.admin.mysql')->rollBack();

@@ -20,6 +20,7 @@ use plugin\admin\app\model\Base;
  * @property \Illuminate\Support\Carbon $time 时间
  * @method static Builder<static>|UserTime gtNow()
  * @property-read mixed $time_formatted
+ * @property-read mixed $status_text
  * @mixin \Eloquent
  */
 class UserTime extends Base
@@ -49,6 +50,11 @@ class UserTime extends Base
         'time' => 'datetime',
     ];
 
+    protected $appends = [
+        'time_formatted',
+        'status_text',
+    ];
+
     function scopeGtNow(Builder $query)
     {
         $query->where('time', '>=',  Carbon::now())->orderBy('id');
@@ -57,6 +63,15 @@ class UserTime extends Base
     public function getTimeFormattedAttribute()
     {
         return $this->time ? $this->time->format('H:i') : null;
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return [
+            'available' => '可预约',
+            'unavailable' => '不可约预',
+            'booked' => '已被预约',
+        ][$this->status] ?? '';
     }
     
     

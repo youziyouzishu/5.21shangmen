@@ -25,7 +25,7 @@ class UserController extends Base
      */
     function getUserInfo(Request $request)
     {
-        $row = User::withCount(['coupon','collect'])->find($request->user_id);
+        $row = User::withCount(['coupon','collect'])->with(['city'])->find($request->user_id);
         if (!$row) {
             throw new JwtRefreshTokenExpiredException();
         }
@@ -190,6 +190,24 @@ class UserController extends Base
             }
         })->get();
         return $this->success('成功', $rows);
+    }
+
+    /**
+     * 上传位置
+     * @param Request $request
+     * @return \support\Response
+     */
+    function uploadLocation(Request $request)
+    {
+        $lat = $request->input('lat');
+        $lng = $request->input('lng');
+        $row = Area::getCityFromLngLat($lng, $lat);
+        $user = User::find($request->user_id);
+        $user->lat = $lat;
+        $user->lng = $lng;
+        $user->city_id = $row->id;
+        $user->save();
+        return $this->success();
     }
 
 }

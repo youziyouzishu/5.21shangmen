@@ -51,6 +51,7 @@ use support\Db;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\Order> $orders
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserCoupon> $coupon
  * @property string|null $photo 相册
+ * @property-read \app\admin\model\Area|null $city
  * @mixin \Eloquent
  */
 class User extends Base
@@ -163,6 +164,11 @@ class User extends Base
     function coupon()
     {
         return $this->hasMany(UserCoupon::class, 'user_id', 'id');
+    }
+
+    function city()
+    {
+        return $this->belongsTo(Area::class, 'city_id', 'id');
     }
 
 

@@ -97,17 +97,19 @@ class CoserOrderController extends Base
      */
     function arrive(Request $request)
     {
-        $lng = $request->post('lng');
-        $lat = $request->post('lat');
         $id = $request->post('id');
         $arrive_image = $request->post('arrive_image');
         $arrive_mark = $request->post('arrive_mark');
         if (empty($arrive_image)) {
             return $this->fail('必须上传照片');
         }
+        $user = User::find($request->user_id);
+        $lng = $user->lng;
+        $lat = $user->lat;
         if (empty($lng) || empty($lat)) {
             return $this->fail('获取位置失败');
         }
+
         $order = Order::find($id);
         if (!$order) {
             return $this->fail('订单不存在');
@@ -133,8 +135,6 @@ class CoserOrderController extends Base
      */
     function startService(Request $request)
     {
-        $lng = $request->post('lng');
-        $lat = $request->post('lat');
         $id = $request->post('id');
         $order = Order::find($id);
         if (!$order) {
@@ -143,6 +143,9 @@ class CoserOrderController extends Base
         if ($order->status != 9) {
             return $this->fail('订单状态错误');
         }
+        $user = User::find($request->user_id);
+        $lng = $user->lng;
+        $lat = $user->lat;
         if (empty($lng) || empty($lat)) {
             return $this->fail('获取位置失败');
         }
@@ -164,8 +167,7 @@ class CoserOrderController extends Base
      */
     function endService(Request $request)
     {
-        $lng = $request->post('lng');
-        $lat = $request->post('lat');
+
         $id = $request->post('id');
         $order = Order::find($id);
         if (!$order) {
@@ -174,6 +176,9 @@ class CoserOrderController extends Base
         if ($order->status != 5) {
             return $this->fail('订单状态错误');
         }
+        $user = User::find($request->user_id);
+        $lng = $user->lng;
+        $lat = $user->lat;
         if (empty($lng) || empty($lat)) {
             return $this->fail('获取位置失败');
         }

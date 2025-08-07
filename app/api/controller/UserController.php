@@ -207,7 +207,7 @@ class UserController extends Base
         $user->lng = $lng;
         $user->city_id = $row->id;
         $user->save();
-        return $this->success();
+        return $this->success('成功', $user->load('city'));
     }
 
 }

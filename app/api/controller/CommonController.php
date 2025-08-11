@@ -61,6 +61,14 @@ class CommonController extends Base
         return $this->success('请求成功', $rows);
     }
 
+    function getAreaSortList(Request $request)
+    {
+        $rows = Area::where('level', 2)->orderBy('first', 'asc')->get()->groupBy('first');
+        return $this->success('请求成功', [
+            'city' => $rows,
+        ]);
+    }
+
     /**
      * 公告栏
      * @param Request $request

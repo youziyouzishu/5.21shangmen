@@ -81,7 +81,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">城市</label>
                         <div class="layui-input-block">
-                            <input type="number" name="city_id" value="" class="layui-input">
+                            <div name="city_id" id="city_id" value="" ></div>
                         </div>
                     </div>
                     
@@ -141,6 +141,47 @@
                         this.item.prev().val(res.data.url).prev().attr("src", res.data.url);
                     }
                 });
+            });
+
+            layui.use(["jquery", "xmSelect", "popup"], function() {
+                let value = layui.$("#city_id").attr("value");
+                let initValue = value ? value.split(",") : [];
+                window.selectUser = layui.xmSelect.render({
+                    el: '#city_id',
+                    name: "city_id",
+                    //配置搜索
+                    filterable: true,
+                    //配置远程分页
+                    clickClose: true,
+                    paging: true,
+                    pageRemote: true,
+                    radio: true,
+                    remoteSearch:true,
+                    initValue: initValue,
+                    template({ item, sels, name, value }){
+                        return name + '<span style="position: absolute; right: 10px; color: #8799a3">'+value+'</span>'
+                    },
+                    prop: {
+                        name: 'name',
+                        value: 'id',
+                    },
+                    //数据处理
+                    remoteMethod: function(val, cb, show, pageIndex){
+                        layui.$.ajax({
+                            url: "/admin/area/select",
+                            dataType: "json",
+                            data: {
+                                name: ['like',val],
+                                level: 2,
+                                page: pageIndex,
+                            },
+                            success: function (res) {
+                                //回调需要两个参数, 第一个: 数据数组, 第二个: 总页码
+                                cb(res.data,Math.ceil(res.count / 10))
+                            }
+                        });
+                    }
+                })
             });
             
             // 字段 禁用 status

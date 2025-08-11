@@ -35,7 +35,7 @@ return [
         ],
         // 事件，event 与 webman/event 存在冲突，event 重命名为 event_trigger
         'event_trigger' => [
-            'enable' => false,
+            'enable' => true,
             // 钉钉机器人
             'dingtalk' => [
                 'accessToken' => 'dc7f1d377b24e052c7c5b870dbafa4c3e61f2e8b8c800d216c03311f2203e7fb',

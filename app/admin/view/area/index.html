@@ -10,44 +10,7 @@
     <body class="pear-container">
     
         <!-- 顶部查询表单 -->
-        <div class="layui-card">
-            <div class="layui-card-body">
-                <form class="layui-form top-search-from">
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">主键</label>
-                        <div class="layui-input-block">
-                            <input type="number" name="id" value="" class="layui-input">
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">创建时间</label>
-                        <div class="layui-input-block">
-                            <div class="layui-input-block" id="created_at">
-                                <input type="text" autocomplete="off" name="created_at[]" id="created_at-date-start" class="layui-input inline-block" placeholder="开始时间">
-                                -
-                                <input type="text" autocomplete="off" name="created_at[]" id="created_at-date-end" class="layui-input inline-block" placeholder="结束时间">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item layui-inline">
-                        <label class="layui-form-label"></label>
-                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="table-query">
-                            <i class="layui-icon layui-icon-search"></i>查询
-                        </button>
-                        <button type="reset" class="pear-btn pear-btn-md" lay-submit lay-filter="table-reset">
-                            <i class="layui-icon layui-icon-refresh"></i>重置
-                        </button>
-                    </div>
-                    <div class="toggle-btn">
-                        <a class="layui-hide">展开<i class="layui-icon layui-icon-down"></i></a>
-                        <a class="layui-hide">收起<i class="layui-icon layui-icon-up"></i></a>
-                    </div>
-                </form>
-            </div>
-        </div>
+        
         
         <!-- 数据表格 -->
         <div class="layui-card">
@@ -58,18 +21,18 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.project.insert">
+            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="admin.area.insert">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.project.delete">
+            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="admin.area.delete">
                 <i class="layui-icon layui-icon-delete"></i>删除
             </button>
         </script>
 
         <!-- 表格行工具栏 -->
         <script type="text/html" id="table-bar">
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.project.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.project.delete">删除</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="admin.area.update">编辑</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="admin.area.delete">删除</button>
         </script>
 
         <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
@@ -81,20 +44,11 @@
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/project/select";
-            const UPDATE_API = "/admin/project/update";
-            const DELETE_API = "/admin/project/delete";
-            const INSERT_URL = "/admin/project/insert";
-            const UPDATE_URL = "/admin/project/update";
-            
-            // 字段 创建时间 created_at
-            layui.use(["laydate"], function() {
-                layui.laydate.render({
-                    elem: "#created_at",
-                    range: ["#created_at-date-start", "#created_at-date-end"],
-                    type: "datetime",
-                });
-            })
+            const SELECT_API = "/admin/area/select";
+            const UPDATE_API = "/admin/area/update";
+            const DELETE_API = "/admin/area/delete";
+            const INSERT_URL = "/admin/area/insert";
+            const UPDATE_URL = "/admin/area/update";
             
             // 表格渲染
             layui.use(["table", "form", "common", "popup", "util"], function() {
@@ -110,52 +64,41 @@
 						type: "checkbox",
 						align: "center"
 					},{
-						title: "主键",align: "center",
+						title: "ID",align: "center",
 						field: "id",
-						sort: true,
 					},{
-						title: "项目名称",align: "center",
+						title: "父id",align: "center",
+						field: "pid",
+					},{
+						title: "简称",align: "center",
+						field: "shortname",
+					},{
+						title: "名称",align: "center",
 						field: "name",
 					},{
-						title: "价格",align: "center",
-						field: "price",
+						title: "全称",align: "center",
+						field: "mergename",
 					},{
-						title: "封面",align: "center",
-						field: "image",
-						templet: function (d) {
-							return '<img src="'+encodeURI(d['image'])+'" style="max-width:32px;max-height:32px;" alt="" />'
-						}
+						title: "层级:1=省,2=市,3=区/县",align: "center",
+						field: "level",
 					},{
-						title: "轮播图",align: "center",
-						field: "images",
-						                templet: function (d) {
-						                    let html = '';
-						                    if(d['images']){
-						                    const images = d['images'].split(',');
-				                        
-				                            for (let img of images) {
-				                                html += '<img src="' + encodeURI(img.trim()) + '" style="max-width:32px;max-height:32px;" alt="" />';
-				                            }
-						                    }
-				                            
-				                            return html;
-										}
+						title: "拼音",align: "center",
+						field: "pinyin",
 					},{
-						title: "标签",align: "center",
-						field: "tag",
+						title: "长途区号",align: "center",
+						field: "code",
 					},{
-						title: "分钟数",align: "center",
-						field: "minutes",
+						title: "邮编",align: "center",
+						field: "zip",
 					},{
-						title: "销量",align: "center",
-						field: "sales",
+						title: "首字母",align: "center",
+						field: "first",
 					},{
-						title: "创建时间",align: "center",
-						field: "created_at",
-						sort: true,
+						title: "经度",align: "center",
+						field: "lng",
 					},{
-						title: "更新时间",align: "center",
-						field: "updated_at",
+						title: "纬度",align: "center",
+						field: "lat",
 					},{
 						title: "操作",
 						toolbar: "#table-bar",

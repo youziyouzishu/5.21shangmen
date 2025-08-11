@@ -153,23 +153,13 @@ class UserOrderController extends Base
         if (!$coser) {
             return $this->fail('请选择Coser');
         }
-        $user_lat = $address->lat;
-        $user_lng = $address->lng;
-        $coser_lat = $coser->lat;
-        $coser_lng = $coser->lng;
+
         $costume = Costume::find($costume_id);
         if (!$costume) {
             return $this->fail('请选择服饰');
         }
         if ($userCostme = UserCostume::where('user_id', $coser->id)->where('costume_id', $costume->id)->first()) {
             $costume->image = $userCostme->image;
-        }
-        $distance = Area::getDistanceFromLngLat($user_lat, $user_lng, $coser_lat, $coser_lng);
-        if ($coser->fare == 0) {
-            $fare_amount = 0;
-        } else {
-            $distance = ceil($distance);
-            $fare_amount = $distance * 6 * 2;
         }
 
 
@@ -190,7 +180,7 @@ class UserOrderController extends Base
                 'project_ext' => $project
             ];
         }
-        $pay_amount = $total_amount = $project_amount + $fare_amount;
+        $pay_amount = $total_amount = $project_amount;
 
         $need_times = $total_minute / 30;
 
@@ -243,7 +233,6 @@ class UserOrderController extends Base
                 'ordersn' => $ordersn,
                 'project_amount' => $project_amount,
                 'pay_amount' => $pay_amount,
-                'fare_amount' => $fare_amount,
                 'costume_ext' => $costume,
                 'total_minute' => $total_minute,
                 'mark' => $mark,
@@ -252,11 +241,6 @@ class UserOrderController extends Base
                 'agent_get_amount' => $agent_get_amount,
                 'coser_get_amount' => $coser_get_amount,
                 'admin_get_amount' => $admin_get_amount,
-                'user_lat' => $user_lat,
-                'user_lng' => $user_lng,
-                'coser_lat' => $coser_lat,
-                'coser_lng' => $coser_lng,
-                'distance' => $distance,
             ]);
             $order->items()->createMany($items);
             if ($cancoupon) {

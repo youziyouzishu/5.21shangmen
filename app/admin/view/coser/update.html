@@ -181,7 +181,7 @@
                             if (value === '2'){
                                 data = [{"value":"2","name":"驳回"}];
                             }
-                            layui.xmSelect.render({
+                            let statusSelect = layui.xmSelect.render({
                                 el: "#status",
                                 name: "status",
                                 filterable: true,
@@ -190,7 +190,6 @@
                                 model: {"icon":"hidden","label":{"type":"text"}},
                                 clickClose: true,
                                 radio: true,
-                                layVerify: "required",
                                 on: function(data){
                                     //arr:  当前多选已选中的数据
                                     var arr = data.arr;
@@ -207,6 +206,7 @@
                                     //return []
                                 },
                             })
+                            statusSelect.setValue(initValue,false,true);
                         });
                         
                         

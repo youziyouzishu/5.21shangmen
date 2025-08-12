@@ -158,13 +158,11 @@ class CoserOrderController extends Base
             return $this->fail('订单状态错误');
         }
 
-        $order->status = 6;#变为待评价
+        $order->status = 11;#变为待确认
         $order->end_service_time = Carbon::now();
         $order->save();
 
-        #结算
-        Admin::changeMoney($order->agent_get_amount, $order->admin_id, '订单号' . $order->ordersn . '结算');
-        User::changeMoney($order->coser_get_amount, $order->coser_id, '订单号' . $order->ordersn . '结算');
+
         return $this->success('成功');
     }
 

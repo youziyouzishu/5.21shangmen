@@ -26,7 +26,6 @@ use Webman\RedisQueue\Client;
 class UserOrderController extends Base
 {
 
-
     /**
      * 预创建订单
      * @param Request $request
@@ -352,8 +351,32 @@ class UserOrderController extends Base
     {
         $id = $request->post('id');
         Client::send('job', ['id' => $id, 'event' => 'order_expire']);
+
         return $this->success('成功');
     }
+
+    /**
+     * 确认订单
+     * @param Request $request
+     * @return Response
+     * @throws \Throwable
+     */
+    function confirm(Request $request)
+    {
+        $id = $request->post('id');
+        $order = Order::find($id);
+        if (!$order || $order->status != 11) {
+            return $this->fail('订单状态异常');
+        }
+        $order->status = 6;
+        $order->save();
+        #结算
+        Admin::changeMoney($order->agent_get_amount, $order->admin_id, '订单号' . $order->ordersn . '结算');
+        User::changeMoney($order->coser_get_amount, $order->coser_id, '订单号' . $order->ordersn . '结算');
+        return $this->success('成功');
+    }
+    
+    
 
     /**
      * 评价

@@ -22,6 +22,7 @@ use plugin\admin\app\model\Base;
  * @property string|null $package_info pkg
  * @property string|null $mchid 商户id
  * @property string|null $appid appid
+ * @property-read \app\admin\model\User|null $user
  * @mixin \Eloquent
  */
 class UserWithdraw extends Base

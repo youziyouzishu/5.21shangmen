@@ -21,6 +21,7 @@ use support\Db;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserMoneyLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserMoneyLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserMoneyLog query()
+ * @property-read \app\admin\model\User|null $user
  * @mixin \Eloquent
  */
 class UserMoneyLog extends Base

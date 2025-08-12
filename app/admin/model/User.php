@@ -5,6 +5,7 @@ namespace app\admin\model;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use plugin\admin\app\model\Base;
 use support\Db;
 
@@ -52,10 +53,12 @@ use support\Db;
  * @property string|null $photo 相册
  * @property-read \app\admin\model\Area|null $city
  * @property \Illuminate\Support\Carbon|null $birthday 生日
+ * @property string|null $deleted_at 删除时间
  * @mixin \Eloquent
  */
 class User extends Base
 {
+    use SoftDeletes;
     /**
      * The table associated with the model.
      *

@@ -21,6 +21,7 @@ use plugin\admin\app\model\Base;
  * @method static Builder<static>|UserTime gtNow()
  * @property-read mixed $time_formatted
  * @property-read mixed $status_text
+ * @property-read \app\admin\model\User|null $user
  * @mixin \Eloquent
  */
 class UserTime extends Base

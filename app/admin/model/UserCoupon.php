@@ -24,6 +24,7 @@ use plugin\admin\app\model\Base;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCoupon onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCoupon withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserCoupon withoutTrashed()
+ * @property-read \app\admin\model\User|null $user
  * @mixin \Eloquent
  */
 class UserCoupon extends Base

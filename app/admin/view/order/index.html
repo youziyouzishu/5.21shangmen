@@ -165,21 +165,32 @@
 					},{
 						title: "用户",align: "center",
 						field: "user_id",
+                        templet:function(d){
+							return d.user?d.user.nickname:"";
+						}
 					},{
-						title: "Coser",align: "center",
+						title: "陪玩",align: "center",
 						field: "coser_id",
-					},{
-						title: "服饰",align: "center",
-						field: "costume_id",
+                        templet:function(d){
+                            return d.coser?d.coser.nickname:"";
+                        }
 					},{
 						title: "地址",align: "center",
 						field: "address_id",
+                        templet:function(d){
+                            return d.address?d.address.name+d.address.mobile+d.address.province+d.address.city+d.address.region+d.address.address:"";
+                        }
 					},{
 						title: "预约时间",align: "center",
 						field: "time_id",
+                        templet:function(d){
+                            return d.time?d.time.time_formatted:"";
+                        }
 					},{
 						title: "优惠券",align: "center",
 						field: "coupon_id",
+                        hide: true,
+
 					},{
 						title: "订单编号",align: "center",
 						field: "ordersn",
@@ -198,9 +209,6 @@
 					},{
 						title: "优惠券金额",align: "center",
 						field: "coupon_amount",
-					},{
-						title: "服装信息",align: "center",
-						field: "costume_ext",
 					},{
 						title: "总时长",align: "center",
 						field: "total_minute",
@@ -257,21 +265,6 @@
 						title: "平台结算金额",align: "center",
 						field: "admin_get_amount",
 					},{
-						title: "用户纬度",align: "center",
-						field: "user_lat",
-					},{
-						title: "用户经度",align: "center",
-						field: "user_lng",
-					},{
-						title: "Coser纬度",align: "center",
-						field: "coser_lat",
-					},{
-						title: "Coser经度",align: "center",
-						field: "coser_lng",
-					},{
-						title: "距离",align: "center",
-						field: "distance",
-					},{
 						title: "接单时间",align: "center",
 						field: "take_time",
 					},{
@@ -298,6 +291,7 @@
 					},{
 						title: "应该结束时间",align: "center",
 						field: "should_end_service_time",
+                        hide:true
 					},{
 						title: "操作",
 						toolbar: "#table-bar",
@@ -316,6 +310,7 @@
 				    skin: "line",
 				    size: "lg",
 				    toolbar: "#table-toolbar",
+                    cellMinWidth: 120,
 				    autoSort: false,
 				    defaultToolbar: [{
 				        title: "刷新",

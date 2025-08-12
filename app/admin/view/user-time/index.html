@@ -15,7 +15,7 @@
                 <form class="layui-form top-search-from">
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">预约状态:available=可约,unavailable=不可约,booked=已被预约</label>
+                        <label class="layui-form-label">预约状态</label>
                         <div class="layui-input-block">
                             <div name="status" id="status" value="" ></div>
                         </div>
@@ -131,11 +131,14 @@
 					},{
 						title: "用户",align: "center",
 						field: "user_id",
+                        templet:function(d){
+                            return d.user?d.user.nickname:"";
+                        }
 					},{
 						title: "时间",align: "center",
 						field: "time",
 					},{
-						title: "预约状态:available=可约,unavailable=不可约,booked=已被预约",align: "center",
+						title: "预约状态",align: "center",
 						field: "status",
 						templet: function (d) {
 							let field = "status";

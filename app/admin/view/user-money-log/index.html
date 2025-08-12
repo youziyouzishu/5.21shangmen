@@ -108,6 +108,9 @@
 					},{
 						title: "用户",align: "center",
 						field: "user_id",
+                        templet: function (d) {
+                            return d.user?d.user.nickname:"";
+                        }
 					},{
 						title: "变更余额",align: "center",
 						field: "money",

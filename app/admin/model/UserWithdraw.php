@@ -41,6 +41,9 @@ class UserWithdraw extends Base
     protected $primaryKey = 'id';
 
     protected $fillable = ['user_id','amount','pay_type','status','ordersn','ali_account','ali_name','openid','mchid','appid','package_info'];
-    
-    
+
+    function user()
+    {
+        return $this->belongsTo(User::class,'user_id','id');
+    }
 }

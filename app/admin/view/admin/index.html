@@ -196,6 +196,9 @@
 					},{
 						title: "城市",align: "center",
 						field: "city_id",
+                        templet: function (d) {
+                            return d.city?d.city.mergename:''
+						}
 					},{
 						title: "操作",
 						toolbar: "#table-bar",

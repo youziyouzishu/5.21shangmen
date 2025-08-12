@@ -39,7 +39,7 @@ class AdminController extends Crud
     {
         [$where, $format, $limit, $field, $order] = $this->selectInput($request);
         $ids = AdminRole::where('role_id', 3)->pluck('admin_id');
-        $query = $this->doSelect($where, $field, $order)->whereIn('id', $ids);
+        $query = $this->doSelect($where, $field, $order)->whereIn('id', $ids)->with(['city']);
         if (in_array(3, admin('roles'))) {
             $query->where('id', admin_id());
         }
@@ -64,7 +64,17 @@ class AdminController extends Crud
     public function insert(Request $request): Response
     {
         if ($request->method() === 'POST') {
-            return parent::insert($request);
+            $city_id = $request->post('city_id');
+            if (!$city_id) {
+                return $this->fail('请选择城市');
+            }
+            $data = $this->insertInput($request);
+            $id = $this->doInsert($data);
+            $admin_role = new AdminRole;
+            $admin_role->admin_id = $id;
+            $admin_role->role_id = 3;
+            $admin_role->save();
+            return $this->json(0, 'ok', ['id' => $id]);
         }
         return view('admin/insert');
     }

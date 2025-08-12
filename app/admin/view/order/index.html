@@ -195,7 +195,7 @@
 						title: "订单编号",align: "center",
 						field: "ordersn",
 					},{
-						title: "商品价格",align: "center",
+						title: "项目价格",align: "center",
 						field: "project_amount",
 					},{
 						title: "支付价格",align: "center",
@@ -203,6 +203,7 @@
 					},{
 						title: "车费",align: "center",
 						field: "fare_amount",
+                        hide:true
 					},{
 						title: "订单总金额",align: "center",
 						field: "total_amount",
@@ -249,14 +250,7 @@
 						title: "完成时间",align: "center",
 						field: "finish_time",
 					},{
-						title: "下单时间",align: "center",
-						field: "created_at",
-						sort: true,
-					},{
-						title: "更新时间",align: "center",
-						field: "updated_at",
-					},{
-						title: "Coser结算金额",align: "center",
+						title: "陪玩结算金额",align: "center",
 						field: "coser_get_amount",
 					},{
 						title: "代理结算金额",align: "center",
@@ -293,6 +287,14 @@
 						field: "should_end_service_time",
                         hide:true
 					},{
+                        title: "下单时间",align: "center",
+                        field: "created_at",
+                        sort: true,
+                    },{
+                        title: "更新时间",align: "center",
+                        field: "updated_at",
+                        hide: true,
+                    },{
 						title: "操作",
 						toolbar: "#table-bar",
 						align: "center",

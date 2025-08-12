@@ -79,6 +79,11 @@ class Admin extends Base
         }
     }
 
+    function city()
+    {
+        return $this->belongsTo(Area::class, 'city_id', 'id');
+    }
+
 
 
 

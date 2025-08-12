@@ -54,6 +54,9 @@ use support\Db;
  * @property-read \app\admin\model\Area|null $city
  * @property \Illuminate\Support\Carbon|null $birthday 生日
  * @property string|null $deleted_at 删除时间
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
  * @mixin \Eloquent
  */
 class User extends Base

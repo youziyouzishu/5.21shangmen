@@ -15,11 +15,17 @@
             <div class="mainBox">
                 <div class="main-container mr-5">
 
-                    
                     <div class="layui-form-item">
                         <label class="layui-form-label required">状态</label>
                         <div class="layui-input-block">
                             <div name="status" id="status" required value="" ></div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item reason layui-hide">
+                        <label class="layui-form-label">驳回原因</label>
+                        <div class="layui-input-block">
+                            <textarea name="reason" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     
@@ -48,8 +54,8 @@
 
             // 相关接口
             const PRIMARY_KEY = "id";
-            const SELECT_API = "/admin/user-withdraw/select" + location.search;
-            const UPDATE_API = "/admin/user-withdraw/update";
+            const SELECT_API = "/admin/admin-withdraw/select" + location.search;
+            const UPDATE_API = "/admin/admin-withdraw/update";
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
                 let $ = layui.$;
@@ -86,39 +92,46 @@
                                 });
                             }
                         });
-                        
-                        // 字段 提现方式:1=微信,2=支付宝 pay_type
-                        layui.use(["jquery", "xmSelect"], function() {
-                            let value = layui.$("#pay_type").attr("value");
-                            let initValue = value ? value.split(",") : [];
-                            layui.xmSelect.render({
-                                el: "#pay_type",
-                                name: "pay_type",
-                                filterable: true,
-                                initValue: initValue,
-                                data: [{"value":"1","name":"微信"},{"value":"2","name":"支付宝"}],
-                                model: {"icon":"hidden","label":{"type":"text"}},
-                                clickClose: true,
-                                radio: true,
-                                layVerify: "required",
-                            })
-                        });
-                        
-                        // 字段 状态:1=待收款,2=提现成功 status
+
+
+
+                        // 字段 状态:0=待审核,1=成功,2=驳回 status
                         layui.use(["jquery", "xmSelect"], function() {
                             let value = layui.$("#status").attr("value");
                             let initValue = value ? value.split(",") : [];
-                            layui.xmSelect.render({
+                            let data = [{"value":"0","name":"待审核"},{"value":"1","name":"成功"},{"value":"2","name":"驳回"}];
+                            if (value === '1'){
+                                data = [{"value":"1","name":"成功"}];
+                            }
+                            if (value === '2'){
+                                data = [{"value":"2","name":"驳回"}];
+                            }
+                            let statusSelect = layui.xmSelect.render({
                                 el: "#status",
                                 name: "status",
                                 filterable: true,
                                 initValue: initValue,
-                                data: [{"value":"1","name":"待收款"},{"value":"2","name":"提现成功"}],
+                                data: data,
                                 model: {"icon":"hidden","label":{"type":"text"}},
                                 clickClose: true,
                                 radio: true,
-                                layVerify: "required",
+                                on: function(data){
+                                    //arr:  当前多选已选中的数据
+                                    var arr = data.arr;
+                                    //change, 此次选择变化的数据,数组
+                                    var change = data.change;
+                                    //isAdd, 此次操作是新增还是删除
+                                    var isAdd = data.isAdd;
+                                    if (isAdd && change[0].value === "2"){
+                                        $(".reason").removeClass("layui-hide")
+                                    }else{
+                                        $(".reason").addClass("layui-hide")
+                                    }
+                                    //可以return一个数组, 代表想选中的数据
+                                    //return []
+                                },
                             })
+                            statusSelect.setValue(initValue,false,true);
                         });
                         
                         

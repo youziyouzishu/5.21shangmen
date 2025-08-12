@@ -24,6 +24,7 @@ use support\Db;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin query()
  * @property int|null $city_id 城市
  * @property-read \app\admin\model\Area|null $city
+ * @property string $money 余额
  * @mixin \Eloquent
  */
 class Admin extends Base

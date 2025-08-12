@@ -76,7 +76,8 @@ class CommonController extends Base
      */
     function getNoticeList(Request $request)
     {
-        $row = Notice::orderByDesc('id')->first();
+        $type = $request->post('type');//类型:1=用户端,2=陪玩端
+        $row = Notice::where('type', $type)->orderByDesc('id')->first();
         return $this->success('请求成功', $row);
     }
 

@@ -168,6 +168,16 @@ class CoserController extends Base
         $card_front = $request->post('card_front');
         $card_back = $request->post('card_back');
         $card_handheld = $request->post('card_handheld');
+        $user = User::find($request->user_id);
+        if (!$user->birthday){
+            return $this->fail('请先完善个人信息');
+        }
+
+        $age = $user->birthday->age;
+        if ($age <= 14 || $age >= 35) {
+            return $this->fail('年龄不符合要求');
+        }
+
         $exist = Coser::where(['user_id' => $request->user_id, 'status' => 0])->first();
         if ($exist) {
             return $this->fail('平台审核中，请勿重复申请');

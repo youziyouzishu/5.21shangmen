@@ -10,6 +10,10 @@ use plugin\admin\app\model\Base;
  * @property integer $weight 权重
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner query()
+ * @mixin \Eloquent
  */
 class Banner extends Base
 {

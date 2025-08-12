@@ -22,6 +22,13 @@
                     </div>
                     
                     <div class="layui-form-item">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-block">
+                            <div name="type" id="type" value="" ></div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
                         <label class="layui-form-label">创建时间</label>
                         <div class="layui-input-block">
                             <div class="layui-input-block" id="created_at">
@@ -87,6 +94,22 @@
             const INSERT_URL = "/admin/notice/insert";
             const UPDATE_URL = "/admin/notice/update";
             
+            // 字段 类型:1=用户端,2=陪玩端 type
+            layui.use(["jquery", "xmSelect"], function() {
+                let value = layui.$("#type").attr("value");
+                let initValue = value ? value.split(",") : [];
+                layui.xmSelect.render({
+                    el: "#type",
+                    name: "type",
+                    filterable: true,
+                    initValue: initValue,
+                    data: [{"value":"1","name":"用户端"},{"value":"2","name":"陪玩端"}],
+                    model: {"icon":"hidden","label":{"type":"text"}},
+                    clickClose: true,
+                    radio: true,
+                })
+            });
+            
             // 字段 创建时间 created_at
             layui.use(["laydate"], function() {
                 layui.laydate.render({
@@ -113,6 +136,18 @@
 						title: "主键",align: "center",
 						field: "id",
 						sort: true,
+					},{
+						title: "类型",align: "center",
+						field: "type",
+						templet: function (d) {
+							let field = "type";
+							if (typeof d[field] == "undefined") return "";
+							let items = [];
+							layui.each((d[field] + "").split(","), function (k , v) {
+								items.push(apiResults[field][v] || v);
+							});
+							return util.escape(items.join(","));
+						}
 					},{
 						title: "标题",align: "center",
 						field: "title",
@@ -155,7 +190,9 @@
 				    }
 				});
 				
-				
+				// 获取表格中下拉或树形组件数据
+				let apiResults = {};
+				apiResults["type"] = {"1":"用户端","2":"陪玩端"};
                 // 编辑或删除行事件
                 table.on("tool(data-table)", function(obj) {
                     if (obj.event === "remove") {

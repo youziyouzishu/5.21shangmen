@@ -18,7 +18,6 @@ use support\Db;
  * @property string|null $email 邮箱
  * @property string|null $mobile 手机
  * @property int $level 等级
- * @property string|null $birthday 生日
  * @property string $money 余额(元)
  * @property int $score 积分
  * @property \Illuminate\Support\Carbon|null $last_time 登录时间
@@ -52,6 +51,7 @@ use support\Db;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\admin\model\UserCoupon> $coupon
  * @property string|null $photo 相册
  * @property-read \app\admin\model\Area|null $city
+ * @property \Illuminate\Support\Carbon|null $birthday 生日
  * @mixin \Eloquent
  */
 class User extends Base
@@ -76,6 +76,7 @@ class User extends Base
         'updated_at' => 'datetime',
         'last_time' => 'datetime',
         'join_time' => 'datetime',
+        'birthday' => 'date'
     ];
 
     protected $fillable = [
@@ -170,6 +171,8 @@ class User extends Base
     {
         return $this->belongsTo(Area::class, 'city_id', 'id');
     }
+
+
 
 
 }

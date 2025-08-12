@@ -16,6 +16,13 @@
                 <div class="main-container mr-5">
                     
                     <div class="layui-form-item">
+                        <label class="layui-form-label required">类型</label>
+                        <div class="layui-input-block">
+                            <div name="type" id="type" required value="" ></div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
                         <label class="layui-form-label required">标题</label>
                         <div class="layui-input-block">
                             <input type="text" name="title" value="" required lay-verify="required" class="layui-input">
@@ -91,6 +98,23 @@
                                     );
                                 });
                             }
+                        });
+                        
+                        // 字段 类型:1=用户端,2=陪玩端 type
+                        layui.use(["jquery", "xmSelect"], function() {
+                            let value = layui.$("#type").attr("value");
+                            let initValue = value ? value.split(",") : [];
+                            layui.xmSelect.render({
+                                el: "#type",
+                                name: "type",
+                                filterable: true,
+                                initValue: initValue,
+                                data: [{"value":"1","name":"用户端"},{"value":"2","name":"陪玩端"}],
+                                model: {"icon":"hidden","label":{"type":"text"}},
+                                clickClose: true,
+                                radio: true,
+                                layVerify: "required",
+                            })
                         });
                         
                         // 字段 内容 content
